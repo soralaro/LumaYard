@@ -1,0 +1,4 @@
+import type { Metadata } from "next";
+import LegalPage from "@/components/legal-page";
+export const metadata: Metadata = { title: "Terms | LumaYard", description: "LumaYard terms of use and sale." };
+export default function TermsPage() { return <LegalPage title="Terms" intro="The simple terms for using LumaYard and ordering from us."><h2>Product information</h2><p>We make every effort to keep descriptions, dimensions, images, and pricing accurate. Colors and finish may vary slightly by screen and natural light.</p><h2>Orders and payment</h2><p>Orders are accepted through Stripe Payment Links and are subject to availability. Project quotes are estimates until confirmed in writing.</p><h2>Contact</h2><p>Questions about these terms can be sent to <a href="mailto:hello@lumayard.com" className="font-semibold text-[#19382f] underline decoration-[#c89957] underline-offset-4">hello@lumayard.com</a>.</p></LegalPage>; }

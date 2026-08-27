@@ -16,6 +16,16 @@ export const metadata: Metadata = {
   title: "LumaYard | Outdoor living, beautifully considered",
   description:
     "Lighting, privacy, and outdoor pieces designed to make every night outside feel more beautiful.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://lumayard.com"),
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "LumaYard | Outdoor living, beautifully considered",
+    description: "Thoughtful lighting and outdoor pieces for the moments you want to make last.",
+    url: "/",
+    siteName: "LumaYard",
+    type: "website",
+  },
+  twitter: { card: "summary_large_image", title: "LumaYard", description: "Outdoor living, beautifully considered." },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

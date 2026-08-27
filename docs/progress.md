@@ -51,7 +51,12 @@
 - [x] 静态页面生成通过
 - [x] 产品详情页生成 3 个示例产品路由
 - [x] `npm run lint` 无错误
-- [ ] lint 仍有 7 条 `<img>` 性能警告，后续应改为 `next/image` 或配置图片加载策略
+- [x] 首页、商品列表和商品详情图片已迁移到 `next/image`，并配置 Unsplash 远程图片域名
+- [x] 增加加载中、错误、404、sitemap、robots、Open Graph 和 Product 结构化数据
+- [x] 联系表单增加客户端状态、服务端字段校验、蜜罐字段和基础限流
+- [x] 补充 About、Shipping、Returns、Privacy、Terms 页面及 `.env.example`
+- [x] 增加 `/admin` 密码登录、产品新增/编辑/删除和 JSON 产品存储
+- [x] 使用 Node.js 20.20.2 + `next build --webpack` 完成生产构建验证；受限环境下 Turbopack 仍会触发端口权限错误
 
 当前构建路由：
 

@@ -1,0 +1,5 @@
+import Link from "next/link";
+
+export default function LegalPage({ title, intro, children }: { title: string; intro: string; children: React.ReactNode }) {
+  return <main className="min-h-screen bg-[#f5f2eb] px-5 py-10 text-[#19382f] sm:px-8 lg:px-14"><div className="mx-auto max-w-[900px]"><div className="flex items-center justify-between"><Link href="/" className="font-[family-name:var(--font-display)] text-3xl">Luma<span className="italic">Yard</span></Link><Link href="/" className="text-[10px] font-bold uppercase tracking-[0.18em]">Home</Link></div><header className="mt-20 border-b border-[#19382f]/20 pb-10"><p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#6b7e57]">LumaYard policies</p><h1 className="mt-4 font-[family-name:var(--font-display)] text-5xl leading-[1.02] tracking-[-0.04em] sm:text-6xl">{title}</h1><p className="mt-6 max-w-2xl text-base leading-7 text-[#536058]">{intro}</p></header><article className="prose prose-stone mt-12 max-w-none text-sm leading-7 text-[#536058]">{children}</article></div></main>;
+}
