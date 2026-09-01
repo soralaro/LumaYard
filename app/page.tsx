@@ -4,6 +4,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import products from "@/data/products.json";
 
 type IconName =
   | "arrow"
@@ -123,6 +124,21 @@ export default function Home() {
           <div className="mb-12 grid gap-5 md:grid-cols-[1fr_auto]"><div><p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#6b7e57]">Made to live outdoors</p><h2 className="mt-3 font-[family-name:var(--font-display)] text-4xl tracking-[-0.035em] text-[#19382f] sm:text-5xl">A better kind of glow.</h2></div><ArrowLink>Shop all collections</ArrowLink></div>
           <div className="grid gap-5 md:grid-cols-3">
             {collections.map((collection) => <article key={collection.title} className="group"><a href="#contact" className="relative block aspect-[1.13] overflow-hidden bg-[#849075]"><Image src={collection.image} alt={`${collection.title} collection`} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover transition duration-700 group-hover:scale-105" /></a><div className="border-b border-[#1e3b33]/20 py-5"><div className="flex items-center justify-between"><span className="text-[10px] font-bold tracking-[0.2em] text-[#9c7747]">{collection.number}</span><a href="#contact" aria-label={`Explore ${collection.title}`} className="text-[#1e3b33]"><Icon name="arrow" className="h-4 w-4 transition-transform group-hover:translate-x-1" /></a></div><h3 className="mt-3 font-[family-name:var(--font-display)] text-3xl text-[#19382f]">{collection.title}</h3><p className="mt-2 max-w-sm text-sm leading-6 text-[#59625b]">{collection.description}</p></div></article>)}
+          </div>
+        </div>
+      </section>
+
+      <section id="products" className="bg-[#f5f2eb] px-5 py-22 sm:px-8 md:py-30 lg:px-14">
+        <div className="mx-auto max-w-[1440px]">
+          <div className="mb-11 flex flex-col justify-between gap-5 md:flex-row md:items-end">
+            <div><p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#6b7e57]">Shop the pieces</p><h2 className="mt-3 font-[family-name:var(--font-display)] text-4xl tracking-[-0.035em] text-[#19382f] sm:text-5xl">Made for your evenings.</h2><p className="mt-4 max-w-xl text-sm leading-6 text-[#536058]">Tap a product to see its full gallery, price, specifications, and details.</p></div>
+            <Link href="/shop" className="group inline-flex items-center gap-3 border-b border-[#1e3b33]/35 pb-2 text-xs font-bold uppercase tracking-[0.18em] text-[#1e3b33]">View all products <Icon name="arrow" className="h-4 w-4 transition-transform group-hover:translate-x-1" /></Link>
+          </div>
+          <div className="grid gap-5 md:grid-cols-3">
+            {products.map((product) => <article key={product.handle} className="group">
+              <Link href={`/products/${product.handle}`} className="relative block aspect-[1.05] overflow-hidden bg-[#849075]"><Image src={product.image} alt={product.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover transition duration-700 group-hover:scale-105" /></Link>
+              <div className="border-b border-[#1e3b33]/20 py-5"><div className="flex items-start justify-between gap-4"><div><p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#927141]">{product.collection}</p><h3 className="mt-2 font-[family-name:var(--font-display)] text-2xl text-[#19382f]"><Link href={`/products/${product.handle}`} className="hover:underline">{product.title}</Link></h3></div><span className="pt-1 text-sm text-[#536058]">${product.price}</span></div><p className="mt-3 text-sm leading-6 text-[#536058]">{product.description}</p><Link href={`/products/${product.handle}`} className="mt-4 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#19382f]">View details <Icon name="arrow" className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" /></Link></div>
+            </article>)}
           </div>
         </div>
       </section>
