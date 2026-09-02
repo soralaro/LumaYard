@@ -40,23 +40,48 @@
     "stripePaymentLink": "https://buy.stripe.com/"
   },
   {
-    "handle": "woven-privacy-screen",
-    "title": "Woven Privacy Screen",
-    "price": 249,
-    "image": "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=85",
-    "collection": "privacy",
-    "spaces": [
-      "backyard",
-      "patio",
-      "garden"
-    ],
-    "description": "A considered boundary that brings intimacy, texture, and a little more calm to open spaces.",
-    "features": [
-      "Modular panels",
-      "Outdoor-rated frame",
-      "Easy installation",
-      "Project consultation included"
-    ],
+    "handle": "terra-garden-path-lights",
+    "title": "Terra Garden Path Lights — 6 Pack",
+    "price": 119,
+    "image": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=85",
+    "collection": "garden-lighting",
+    "spaces": ["garden", "path", "backyard"],
+    "description": "Low-glare path lights that make garden walks feel safe, calm, and beautifully finished.",
+    "features": ["Solar powered", "Warm 2700K LED", "IP65 weatherproof", "Automatic dusk-to-dawn sensor"],
+    "stripePaymentLink": "https://buy.stripe.com/"
+  },
+  {
+    "handle": "mowmate-autonomous-robot-mower",
+    "title": "MowMate Autonomous Robot Mower",
+    "price": 899,
+    "image": "https://images.unsplash.com/photo-1558521958-0a228e77e984?auto=format&fit=crop&w=1200&q=85",
+    "collection": "robotics",
+    "spaces": ["lawn", "backyard", "garden"],
+    "description": "Quiet, boundary-aware mowing that keeps the lawn ready while you enjoy the garden.",
+    "features": ["App scheduling", "Rain sensor", "Up to 800 m² coverage", "Automatic return to dock"],
     "whatsappInquiry": true
+  },
+  {
+    "handle": "yardvault-home-energy-storage",
+    "title": "YardVault Home Energy Storage",
+    "price": 2499,
+    "image": "/uploads/yardvault-home-energy-storage-1.png",
+    "images": ["/uploads/yardvault-home-energy-storage-1.png", "/uploads/yardvault-home-energy-storage-2.png"],
+    "collection": "energy-storage",
+    "spaces": ["backyard", "garage", "home"],
+    "description": "A modular battery system for keeping garden lighting, tools, and outdoor living powered.",
+    "features": ["5 kWh expandable capacity", "Solar input ready", "Outdoor-rated enclosure", "App monitoring"],
+    "whatsappInquiry": true
+  },
+  {
+    "handle": "prunemate-cordless-garden-tool-set",
+    "title": "PruneMate Cordless Garden Tool Set",
+    "price": 329,
+    "image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85",
+    "collection": "garden-tools",
+    "spaces": ["garden", "backyard", "patio"],
+    "description": "A compact battery-powered set for pruning, edging, and everyday garden care.",
+    "features": ["Interchangeable battery", "Pruner and trimmer heads", "Two-hour runtime", "Carry case included"],
+    "stripePaymentLink": "https://buy.stripe.com/"
   }
 ]

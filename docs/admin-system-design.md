@@ -462,3 +462,7 @@ npx prisma migrate deploy
 创建私有 bucket，创建仅限该 bucket 的读写 API token，并设置一个用于公开读取媒体文件的域名，例如 `https://media.example.com`。把该域名和对象存储的 endpoint、bucket、access key、secret key 填入 `.env.example` 中对应的 `S3_` 变量。不要把 API token、数据库密码或 `.env` 提交到 Git。
 
 对象存储 CORS 至少允许站点域名对 `PUT`、`GET` 的访问，并允许 `Content-Type` 请求头。开发时也要加入 `http://localhost:3000`。
+
+## 18. 产品分类
+
+产品目录面向园林与户外场景，当前支持：太阳能灯、便携灯、隐私与结构、围栏与栅栏、庭院照明、园林机器人、用户储能、园林工具和其他园林产品。新增产品时应选择最贴近主要用途的分类，具体型号、材质和功能写入产品描述与规格字段。

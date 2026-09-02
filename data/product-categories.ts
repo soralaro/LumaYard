@@ -1,0 +1,2 @@
+export type ProductCollection = "solar" | "portable" | "fence" | "garden-lighting" | "robotics" | "energy-storage" | "garden-tools" | "other";
+export const collectionLabels: Record<ProductCollection, string> = { solar: "Solar lighting", portable: "Portable lighting", fence: "Fences & railings", "garden-lighting": "Garden lighting", robotics: "Garden robotics", "energy-storage": "Energy storage", "garden-tools": "Garden tools", other: "Other garden products" };

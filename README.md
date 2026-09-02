@@ -65,3 +65,5 @@
 后台管理系统设计见：[docs/admin-system-design.md](docs/admin-system-design.md)。
 
 本地调试环境见：[docs/local-development.md](docs/local-development.md)。
+
+品牌与产品定位见：[docs/brand-and-product-positioning.md](docs/brand-and-product-positioning.md)。
