@@ -1,0 +1,33 @@
+{
+  "products": [],
+  "categories": [
+    {
+      "id": "fences",
+      "name": "栅栏与围栏",
+      "nameEn": "Fences & Privacy",
+      "slug": "fences",
+      "description": "铝合金栅栏、隐私围栏、装饰性围栏和配件"
+    },
+    {
+      "id": "lighting",
+      "name": "庭院灯具",
+      "nameEn": "Garden Lighting",
+      "slug": "lighting",
+      "description": "太阳能灯、充电式灯具和庭院照明"
+    },
+    {
+      "id": "robotics",
+      "name": "庭院剪草工具",
+      "nameEn": "Garden Robotics & Tools",
+      "slug": "robotics",
+      "description": "割草机器人和自动园林工具"
+    },
+    {
+      "id": "energy",
+      "name": "户储能源",
+      "nameEn": "Home & Garden Energy",
+      "slug": "energy",
+      "description": "太阳能储能系统和户外电源"
+    }
+  ]
+}
