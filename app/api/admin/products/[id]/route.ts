@@ -20,10 +20,11 @@ function writeDB(data: any) {
 // GET /api/admin/products/[id] - 获取单个产品
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const db = readDB();
-  const product = db.products?.find((p: any) => p.id === params.id);
+  const product = db.products?.find((p: any) => p.id === id);
 
   if (!product) {
     return NextResponse.json(
@@ -38,13 +39,14 @@ export async function GET(
 // PUT /api/admin/products/[id] - 更新产品
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
     const db = readDB();
 
-    const index = db.products?.findIndex((p: any) => p.id === params.id);
+    const index = db.products?.findIndex((p: any) => p.id === id);
     if (index === -1 || index === undefined) {
       return NextResponse.json(
         { success: false, error: "Product not found" },
@@ -72,11 +74,12 @@ export async function PUT(
 // DELETE /api/admin/products/[id] - 删除产品
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const db = readDB();
-    const index = db.products?.findIndex((p: any) => p.id === params.id);
+    const index = db.products?.findIndex((p: any) => p.id === id);
 
     if (index === -1 || index === undefined) {
       return NextResponse.json(

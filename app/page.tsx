@@ -41,7 +41,6 @@ const productCategories = [
     title: "Fences & Privacy",
     titleEn: "Fences & Privacy",
     description: "Define boundaries, protect privacy, and enhance your yard's beauty",
-    image: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1200&q=85",
     icon: "shield" as IconName,
   },
   {
@@ -49,7 +48,6 @@ const productCategories = [
     title: "Garden Lighting",
     titleEn: "Garden Lighting",
     description: "Solar and rechargeable lights to illuminate your outdoor evenings",
-    image: "https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?auto=format&fit=crop&w=1200&q=85",
     icon: "sun" as IconName,
   },
   {
@@ -57,7 +55,6 @@ const productCategories = [
     title: "Garden Robotics",
     titleEn: "Garden Robotics",
     description: "Robotic mowers and smart tools for hands-free yard maintenance",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=1200&q=85",
     icon: "leaf" as IconName,
   },
   {
@@ -65,7 +62,6 @@ const productCategories = [
     title: "Home Energy",
     titleEn: "Home Energy",
     description: "Solar + storage systems to power your outdoor living",
-    image: "https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=1200&q=85",
     icon: "zap" as IconName,
   },
 ];
@@ -82,9 +78,19 @@ type Product = {
   status: string;
 };
 
+type CategoryData = {
+  id: string;
+  name: string;
+  nameEn: string;
+  description: string;
+  slug: string;
+  coverImage?: string;
+};
+
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<CategoryData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -98,6 +104,7 @@ export default function Home() {
         const data = await res.json();
         const published = (data.products || []).filter((p: Product) => p.status === "published");
         setProducts(published);
+        setCategories(data.categories || []);
       }
     } catch (error) {
       console.error("Failed to load products:", error);
@@ -184,7 +191,15 @@ export default function Home() {
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-2">
-            {productCategories.map((category) => (
+            {productCategories.map((category) => {
+              const categoryData = categories.find((c) => c.id === category.id);
+              const fallbackProduct = products.find((p) => p.category === category.id);
+              const image =
+                categoryData?.coverImage ||
+                fallbackProduct?.images?.[0] ||
+                "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1200&q=85";
+
+              return (
               <Link
                 key={category.id}
                 href={`/shop?category=${category.id}`}
@@ -192,7 +207,7 @@ export default function Home() {
               >
                 <div className="overflow-hidden">
                   <Image
-                    src={category.image}
+                    src={image}
                     alt={category.titleEn}
                     width={1200}
                     height={800}
@@ -219,7 +234,8 @@ export default function Home() {
                   </div>
                 </div>
               </Link>
-            ))}
+            );
+            })}
           </div>
         </div>
       </section>

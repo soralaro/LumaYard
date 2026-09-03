@@ -1,33 +1,120 @@
 {
-  "products": [],
+  "products": [
+    {
+      "id": "prod_1788357805225",
+      "title": "经典扇形栅栏 4英尺",
+      "titleEn": "Classic Scallop Picket Fence 4FT",
+      "price": 200,
+      "category": "fences",
+      "status": "published",
+      "description": "乙烯基私密围栏\n\n我们的乙烯基私密围栏既能提供全封闭的屏障，又兼具整洁现代的外观，非常适合用于后院、侧院以及任何需要完全私密性的场所。该产品坚固耐用、耐候性强且无需频繁维护，是替代传统木质围栏的明智之选。 \n\n可选高度：4英尺、5英尺、6英尺\n颜色：白色、棕褐色及双色搭配\n适用场景：后院隔断、泳池围挡、边界私密防护\n",
+      "descriptionEn": "Vinyl Privacy Fence\n\nOur vinyl privacy fences offer full enclosure and a clean, contemporary look ideal for backyards, side yards, and anywhere you need complete privacy. Durable, low-maintenance, and weather-resistant, they're a smart alternative to traditional wood.\n",
+      "features": [
+        "Available Heights: 4', 5', 6'",
+        "Colors: White, Tan, and Two-Tone",
+        "Ideal For: Backyard separation, pool enclosures, perimeter privacy"
+      ],
+      "images": [
+        "https://www.fencefactory.com/wp-content/uploads/2025/06/VF_ClassicScallopPicket_White_4FT_0617_8.webp"
+      ],
+      "specs": {},
+      "pdfUrl": null,
+      "createdAt": "2026-09-02T14:03:25.225Z",
+      "updatedAt": "2026-09-02T15:08:10.918Z"
+    },
+    {
+      "id": "prod_1788403136341",
+      "title": "gate-automation-For-Homes-Driveways",
+      "titleEn": "gate-automation-For-Homes-Driveways",
+      "price": 200,
+      "category": "fences",
+      "status": "published",
+      "description": "",
+      "descriptionEn": "Automatic gates bring style and safety to residential properties. From swing gates to sliding designs, homeowners can enjoy secure entry without leaving their vehicle. Remote control and keypad options make access effortless.",
+      "features": [],
+      "images": [
+        "https://www.fencefactory.com/wp-content/uploads/2025/09/fence-factory-corporation-gate-automation-For-Homes-Driveways-1000x1000.png"
+      ],
+      "specs": {},
+      "pdfUrl": null,
+      "createdAt": "2026-09-03T02:38:56.341Z",
+      "updatedAt": "2026-09-03T02:39:21.273Z"
+    },
+    {
+      "id": "prod_1788403425944",
+      "title": "Access Gates & Entry Systems",
+      "titleEn": "Access Gates & Entry Systems",
+      "price": 200,
+      "category": "fences",
+      "status": "published",
+      "description": "",
+      "descriptionEn": "Access Gates & Entry Systems\nWe custom-build swing, slide, and cantilever gates for commercial use, complete with automation and access control if needed.",
+      "features": [],
+      "images": [
+        "https://www.fencefactory.com/wp-content/uploads/2025/06/US-Coast-Guard-090211-019-1.jpg"
+      ],
+      "specs": {},
+      "pdfUrl": null,
+      "createdAt": "2026-09-03T02:43:45.944Z",
+      "updatedAt": "2026-09-03T02:43:55.037Z"
+    },
+    {
+      "id": "prod_1788403724406",
+      "title": "ColorMax® Fire Resistant Metal Privacy Fence",
+      "titleEn": "ColorMax® Fire Resistant Metal Privacy Fence",
+      "price": 200,
+      "category": "fences",
+      "status": "published",
+      "description": "",
+      "descriptionEn": "ColorMax® Fire Resistant Metal Privacy Fence\n\nColorMax® is the next generation of privacy fencing; combining the strength of steel with modern design. Unlike wood or vinyl, steel and aluminum do not ignite, warp, or melt when exposed to fire. ColorMax® panels are engineered to provide lasting privacy and safety while aligning with evolving California fire standards.",
+      "features": [
+        "    Constructed from galvanized steel for superior strength",
+        "    Fire-resistant, termite-proof, and rust-protected",
+        "    Available in multiple colors and textures",
+        "    Low-maintenance compared to wood or composite fencing",
+        "    Provides complete privacy with a clean, modern appearance"
+      ],
+      "images": [
+        "https://www.fencefactory.com/wp-content/uploads/2025/09/fence-factory-colormax-fire-resistence-metal-privacy-fence-galvanized-steel-low-maintenance.png"
+      ],
+      "specs": {},
+      "pdfUrl": null,
+      "createdAt": "2026-09-03T02:48:44.406Z",
+      "updatedAt": "2026-09-03T02:48:44.406Z"
+    }
+  ],
   "categories": [
     {
       "id": "fences",
       "name": "栅栏与围栏",
       "nameEn": "Fences & Privacy",
       "slug": "fences",
-      "description": "铝合金栅栏、隐私围栏、装饰性围栏和配件"
+      "description": "铝合金栅栏、隐私围栏、装饰性围栏和配件",
+      "coverImage": "/category-cover/1788418561034.webp"
     },
     {
       "id": "lighting",
       "name": "庭院灯具",
       "nameEn": "Garden Lighting",
       "slug": "lighting",
-      "description": "太阳能灯、充电式灯具和庭院照明"
+      "description": "太阳能灯、充电式灯具和庭院照明",
+      "coverImage": "/category-cover/1788422258682.png"
     },
     {
       "id": "robotics",
       "name": "庭院剪草工具",
       "nameEn": "Garden Robotics & Tools",
       "slug": "robotics",
-      "description": "割草机器人和自动园林工具"
+      "description": "割草机器人和自动园林工具",
+      "coverImage": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 800'%3E%3Crect fill='%234a6741' width='1200' height='800'/%3E%3Crect fill='%2336522f' x='0' y='500' width='1200' height='300'/%3E%3Ccircle cx='300' cy='450' r='80' fill='%23536058'/%3E%3Ccircle cx='300' cy='450' r='60' fill='%23e8c58d'/%3E%3Crect fill='%23536058' x='250' y='520' width='100' height='30'/%3E%3Ccircle cx='700' cy='480' r='75' fill='%23536058'/%3E%3Ccircle cx='700' cy='480' r='55' fill='%23e8c58d'/%3E%3Crect fill='%23536058' x='655' y='550' width='90' height='25'/%3E%3Ctext x='600' y='100' font-size='60' fill='%23e8c58d' text-anchor='middle' font-family='Arial' font-weight='bold'%3EGarden Robotics%3C/text%3E%3Ctext x='600' y='750' font-size='32' fill='%23e8c58d' text-anchor='middle' font-family='Arial'%3EAutomation for Your Lawn%3C/text%3E%3C/svg%3E"
     },
     {
       "id": "energy",
       "name": "户储能源",
       "nameEn": "Home & Garden Energy",
       "slug": "energy",
-      "description": "太阳能储能系统和户外电源"
+      "description": "太阳能储能系统和户外电源",
+      "coverImage": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 800'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%231e3b33;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23102c25;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill='url(%23grad)' width='1200' height='800'/%3E%3Cpolygon points='300,150 350,250 250,250' fill='%23ffd700'/%3E%3Cpolygon points='700,100 780,280 620,280' fill='%23ffed4e'/%3E%3Crect x='200' y='450' width='150' height='180' fill='%23536058' stroke='%23e8c58d' stroke-width='4'/%3E%3Crect x='550' y='450' width='150' height='180' fill='%23536058' stroke='%23e8c58d' stroke-width='4'/%3E%3Crect x='900' y='450' width='150' height='180' fill='%23536058' stroke='%23e8c58d' stroke-width='4'/%3E%3Ctext x='600' y='100' font-size='60' fill='%23e8c58d' text-anchor='middle' font-family='Arial' font-weight='bold'%3EHome Energy%3C/text%3E%3Ctext x='600' y='750' font-size='32' fill='%23e8c58d' text-anchor='middle' font-family='Arial'%3EPower Your Future%3C/text%3E%3C/svg%3E"
     }
   ]
 }

@@ -17,10 +17,13 @@ function writeDB(data: any) {
   fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2), "utf-8");
 }
 
-// GET /api/admin/products - 获取所有产品
+// GET /api/admin/products - 获取所有产品和分类
 export async function GET() {
   const db = readDB();
-  return NextResponse.json({ products: db.products || [] });
+  return NextResponse.json({
+    products: db.products || [],
+    categories: db.categories || [],
+  });
 }
 
 // POST /api/admin/products - 创建新产品

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { use } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -11,7 +12,8 @@ const categories = [
   { id: "energy", name: "户储能源", nameEn: "Home & Garden Energy" },
 ];
 
-export default function EditProduct({ params }: { params: { id: string } }) {
+export default function EditProduct({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -31,13 +33,16 @@ export default function EditProduct({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     loadProduct();
-  }, []);
+  }, [id]);
 
   const loadProduct = async () => {
     try {
-      const res = await fetch(`/api/admin/products/${params.id}`);
+      console.log("Loading product:", id);
+      const res = await fetch(`/api/admin/products/${id}`);
+      console.log("Response status:", res.status);
       if (res.ok) {
         const data = await res.json();
+        console.log("Loaded data:", data);
         const p = data.product;
         setFormData({
           title: p.title || "",
@@ -52,8 +57,12 @@ export default function EditProduct({ params }: { params: { id: string } }) {
           specs: p.specs ? JSON.stringify(p.specs, null, 2) : "",
           pdfUrl: p.pdfUrl || "",
         });
+      } else {
+        console.error("Failed to load:", res.status);
+        alert("加载产品失败");
       }
     } catch (error) {
+      console.error("Load error:", error);
       alert("加载失败");
     } finally {
       setLoading(false);
@@ -79,7 +88,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
         pdfUrl: formData.pdfUrl || null,
       };
 
-      const res = await fetch(`/api/admin/products/${params.id}`, {
+      const res = await fetch(`/api/admin/products/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

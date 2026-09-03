@@ -58,12 +58,12 @@ export default function ShopPage() {
           <Link href="/" className="font-[family-name:var(--font-display)] text-2xl tracking-[0.04em] text-[#19382f] sm:text-3xl">
             Luma<span className="italic">Yard</span>
           </Link>
-          <nav className="hidden items-center gap-8 text-[11px] font-bold uppercase tracking-[0.18em] text-[#19382f] lg:flex">
+          <nav className="hidden items-center gap-8 text-base font-bold uppercase tracking-[0.08em] text-[#19382f] lg:flex">
             <Link href="/#categories" className="transition-opacity hover:opacity-65">Categories</Link>
             <Link href="/shop" className="transition-opacity hover:opacity-65">Shop All</Link>
             <Link href="/contact" className="transition-opacity hover:opacity-65">Contact</Link>
           </nav>
-          <Link href="/admin" className="text-[11px] font-bold uppercase tracking-[0.16em] text-gray-500 hover:text-[#19382f]">
+          <Link href="/admin" className="text-base font-bold uppercase tracking-[0.08em] text-gray-500 hover:text-[#19382f]">
             Admin
           </Link>
         </div>
@@ -107,7 +107,7 @@ export default function ShopPage() {
             </Link>
           </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {filteredProducts.map((product) => (
               <Link
                 key={product.id}
@@ -127,10 +127,10 @@ export default function ShopPage() {
                   <p className="text-xs uppercase tracking-wider text-[#927141]">
                     {categories.find(c => c.id === product.category)?.name || product.category}
                   </p>
-                  <h3 className="mt-2 font-[family-name:var(--font-display)] text-lg text-[#19382f]">
+                  <h3 className="mt-2 font-[family-name:var(--font-display)] text-lg text-[#19382f] line-clamp-2">
                     {product.titleEn}
                   </h3>
-                  <p className="mt-1 text-sm text-[#536058]">{product.title}</p>
+                  <p className="mt-1 text-sm text-[#536058] line-clamp-1">{product.title}</p>
                   <div className="mt-4 flex items-center justify-between">
                     <span className="text-xl font-bold text-[#927141]">
                       ${product.price.toLocaleString()}

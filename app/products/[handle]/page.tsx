@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { use } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -27,18 +28,19 @@ const categoryNames: Record<string, { name: string; nameEn: string }> = {
   energy: { name: "Home & Garden Energy", nameEn: "Home & Garden Energy" },
 };
 
-export default function ProductPage({ params }: { params: { handle: string } }) {
+export default function ProductPage({ params }: { params: Promise<{ handle: string }> }) {
+  const { handle } = use(params);
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
 
   useEffect(() => {
     loadProduct();
-  }, [params.handle]);
+  }, [handle]);
 
   const loadProduct = async () => {
     try {
-      const res = await fetch(`/api/admin/products/${params.handle}`);
+      const res = await fetch(`/api/admin/products/${handle}`);
       if (res.ok) {
         const data = await res.json();
         if (data.product.status === "published") {
@@ -78,12 +80,12 @@ export default function ProductPage({ params }: { params: { handle: string } }) 
           <Link href="/" className="font-[family-name:var(--font-display)] text-2xl tracking-[0.04em] text-[#19382f] sm:text-3xl">
             Luma<span className="italic">Yard</span>
           </Link>
-          <nav className="hidden items-center gap-8 text-[11px] font-bold uppercase tracking-[0.18em] text-[#19382f] lg:flex">
+          <nav className="hidden items-center gap-8 text-base font-bold uppercase tracking-[0.08em] text-[#19382f] lg:flex">
             <Link href="/#categories" className="transition-opacity hover:opacity-65">Categories</Link>
             <Link href="/shop" className="transition-opacity hover:opacity-65">Shop All</Link>
             <Link href="/contact" className="transition-opacity hover:opacity-65">Contact</Link>
           </nav>
-          <Link href="/shop" className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#19382f] hover:opacity-65">
+          <Link href="/shop" className="text-base font-bold uppercase tracking-[0.08em] text-[#19382f] hover:opacity-65">
             Back to shop
           </Link>
         </div>

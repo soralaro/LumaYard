@@ -128,16 +128,39 @@ export default function AdminDashboard() {
       </header>
 
       <main className="mx-auto max-w-7xl px-6 py-8">
+        <div className="mb-8 grid gap-4 md:grid-cols-3">
+          <Link
+            href="/admin/products/new"
+            className="rounded-lg bg-blue-50 p-6 text-center hover:bg-blue-100"
+          >
+            <div className="text-3xl font-bold text-blue-600 mb-2">+</div>
+            <h3 className="font-semibold text-gray-900">新增产品</h3>
+            <p className="text-sm text-gray-600">添加新产品到系统</p>
+          </Link>
+
+          <Link
+            href="/admin/categories"
+            className="rounded-lg bg-green-50 p-6 text-center hover:bg-green-100"
+          >
+            <div className="text-3xl font-bold text-green-600 mb-2">⚙️</div>
+            <h3 className="font-semibold text-gray-900">分类管理</h3>
+            <p className="text-sm text-gray-600">编辑分类封面和信息</p>
+          </Link>
+
+          <Link
+            href="/"
+            className="rounded-lg bg-purple-50 p-6 text-center hover:bg-purple-100"
+          >
+            <div className="text-3xl font-bold text-purple-600 mb-2">👁️</div>
+            <h3 className="font-semibold text-gray-900">查看网站</h3>
+            <p className="text-sm text-gray-600">预览前台展示</p>
+          </Link>
+        </div>
+
         <div className="mb-6 flex items-center justify-between">
           <h2 className="text-xl font-semibold text-gray-900">
             产品列表 ({products.length})
           </h2>
-          <Link
-            href="/admin/products/new"
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-          >
-            + 新增产品
-          </Link>
         </div>
 
         {products.length === 0 ? (
