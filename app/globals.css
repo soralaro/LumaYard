@@ -6,6 +6,8 @@
   --moss: #6b7e57;
   --cream: #f5f2eb;
   --paper: #fffdf8;
+  --collection: #f5f2eb;
+  --edit: #eae4d9;
   --sand: #e7e0d4;
   --ink: #18231e;
   --gold: #c89957;
@@ -25,7 +27,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 ::selection { background: var(--gold); color: var(--forest-deep); }
 
 .homepage-paper {
-  background-color: var(--paper);
+  background-color: var(--edit);
   background-image: linear-gradient(115deg, rgba(200, 153, 87, .055), transparent 28%), linear-gradient(0deg, rgba(30, 59, 51, .025) 1px, transparent 1px);
   background-size: auto, 100% 5px;
 }
