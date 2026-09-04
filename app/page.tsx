@@ -72,7 +72,7 @@ export default function Home() {
         <div className="relative z-10 flex md:min-h-[calc(68svh-6.75rem)] md:items-end">
           <div className="w-full bg-[var(--paper)] px-6 py-12 sm:px-10 md:mb-8 md:ml-[max(2.5rem,calc((100vw-1700px)/2))] md:max-w-[610px] md:px-12 md:py-12 lg:mb-10 lg:px-14 lg:py-14">
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--moss)]">Outdoor essentials, reimagined</p>
-            <h1 className="mt-5 max-w-[11ch] font-[family-name:var(--font-display)] text-5xl leading-[.9] tracking-[-0.055em] sm:text-6xl md:text-7xl lg:text-8xl">Make room for life outside.</h1>
+            <h1 className="mt-5 max-w-[14ch] font-[family-name:var(--font-display)] text-5xl leading-[.9] tracking-[-0.055em] sm:text-6xl md:text-7xl lg:text-8xl">Make room for life outside.</h1>
             <p className="mt-7 max-w-md text-base leading-7 text-[var(--ink)]/75 sm:text-lg">Thoughtful fencing, lighting, automation, and energy solutions for outdoor spaces that feel entirely your own.</p>
             <Link href="/shop" className="homepage-button mt-9">Shop all products <Icon name="arrow" className="h-4 w-4" /></Link>
           </div>
