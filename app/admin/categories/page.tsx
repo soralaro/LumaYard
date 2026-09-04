@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 
 type Category = {
@@ -18,23 +18,27 @@ export default function CategoriesPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<Category>>({});
 
-  useEffect(() => {
-    loadCategories();
-  }, []);
-
-  const loadCategories = async () => {
+  const loadCategories = useCallback(async () => {
     try {
       const res = await fetch("/api/admin/products");
       if (res.ok) {
         const data = await res.json();
         setCategories(data.categories || []);
       }
-    } catch (error) {
+    } catch {
       alert("加载分类失败");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      void loadCategories();
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, [loadCategories]);
 
   const handleEdit = (cat: Category) => {
     setEditingId(cat.id);
@@ -50,10 +54,10 @@ export default function CategoriesPage() {
       });
       if (res.ok) {
         setEditingId(null);
-        loadCategories();
+        await loadCategories();
         alert("分类已更新");
       }
-    } catch (error) {
+    } catch {
       alert("保存失败");
     }
   };
@@ -75,7 +79,7 @@ export default function CategoriesPage() {
         const data = await res.json();
         setFormData({ ...formData, coverImage: data.url });
       }
-    } catch (error) {
+    } catch {
       alert("图片上传失败");
     }
   };
@@ -145,6 +149,8 @@ export default function CategoriesPage() {
                     </label>
                     {formData.coverImage && (
                       <div className="mb-4 max-w-xs">
+                        {/* Category covers may use user-uploaded data URIs. */}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={formData.coverImage}
                           alt={formData.name}
@@ -190,6 +196,8 @@ export default function CategoriesPage() {
                   </div>
                   {cat.coverImage && (
                     <div className="mb-4 max-w-xs">
+                      {/* Category covers may use user-uploaded data URIs. */}
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={cat.coverImage}
                         alt={cat.name}

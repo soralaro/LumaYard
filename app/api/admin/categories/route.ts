@@ -1,45 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
+import { CategoryRecord, readDatabase, writeDatabase } from "@/lib/database";
 
-const DB_PATH = path.join(process.cwd(), "data", "database.json");
-
-function readDB() {
-  try {
-    const data = fs.readFileSync(DB_PATH, "utf-8");
-    return JSON.parse(data);
-  } catch (error) {
-    return { products: [], categories: [] };
-  }
-}
-
-function writeDB(data: any) {
-  fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2), "utf-8");
-}
+type CategoryUpdate = Partial<CategoryRecord> & Pick<CategoryRecord, "id">;
 
 // PUT /api/admin/categories - 更新分类
 export async function PUT(request: NextRequest) {
   try {
-    const body = await request.json();
-    const db = readDB();
+    const categoryUpdate = (await request.json()) as CategoryUpdate;
+    const database = readDatabase();
+    const index = database.categories.findIndex(
+      (category) => category.id === categoryUpdate.id
+    );
 
-    const index = db.categories?.findIndex((c: any) => c.id === body.id);
-    if (index === -1 || index === undefined) {
+    if (index === -1) {
       return NextResponse.json(
         { success: false, error: "Category not found" },
         { status: 404 }
       );
     }
 
-    db.categories[index] = {
-      ...db.categories[index],
-      ...body,
+    database.categories[index] = {
+      ...database.categories[index],
+      ...categoryUpdate,
     };
+    writeDatabase(database);
 
-    writeDB(db);
-
-    return NextResponse.json({ success: true, category: db.categories[index] });
-  } catch (error) {
+    return NextResponse.json({
+      success: true,
+      category: database.categories[index],
+    });
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to update category" },
       { status: 500 }

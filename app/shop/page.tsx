@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams, useRouter } from "next/navigation";
 
 type Product = {
   id: string;
@@ -24,28 +25,33 @@ const categories = [
 ];
 
 export default function ShopPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const selectedCategory = categories.some(
+    (category) => category.id === searchParams.get("category")
+  )
+    ? searchParams.get("category")!
+    : "all";
 
   useEffect(() => {
-    loadProducts();
-  }, []);
-
-  const loadProducts = async () => {
-    try {
-      const res = await fetch("/api/admin/products");
-      if (res.ok) {
-        const data = await res.json();
-        const published = (data.products || []).filter((p: Product) => p.status === "published");
-        setProducts(published);
+    const loadProducts = async () => {
+      try {
+        const res = await fetch("/api/products");
+        if (res.ok) {
+          const data = await res.json();
+          setProducts(data.products || []);
+        }
+      } catch (error) {
+        console.error("Failed to load products:", error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Failed to load products:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    void loadProducts();
+  }, []);
 
   const filteredProducts = selectedCategory === "all"
     ? products
@@ -85,7 +91,7 @@ export default function ShopPage() {
           {categories.map((cat) => (
             <button
               key={cat.id}
-              onClick={() => setSelectedCategory(cat.id)}
+              onClick={() => router.replace(cat.id === "all" ? "/shop" : `/shop?category=${cat.id}`)}
               className={`rounded-full px-5 py-2 text-xs font-bold uppercase tracking-wider transition ${
                 selectedCategory === cat.id
                   ? "bg-[#19382f] text-white"

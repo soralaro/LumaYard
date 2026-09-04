@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
+import Image from "next/image";
 import Link from "next/link";
 
 type Product = {
@@ -13,23 +14,37 @@ type Product = {
   createdAt: string;
 };
 
+const adminAuthChangeEvent = "lumayard-admin-auth-change";
+
+function getAdminAuthSnapshot() {
+  return typeof window !== "undefined" && sessionStorage.getItem("admin_auth") === "true";
+}
+
+function subscribeToAdminAuth(onStoreChange: () => void) {
+  window.addEventListener(adminAuthChangeEvent, onStoreChange);
+  return () => window.removeEventListener(adminAuthChangeEvent, onStoreChange);
+}
+
+function updateAdminAuth(authenticated: boolean) {
+  if (authenticated) {
+    sessionStorage.setItem("admin_auth", "true");
+  } else {
+    sessionStorage.removeItem("admin_auth");
+  }
+
+  window.dispatchEvent(new Event(adminAuthChangeEvent));
+}
+
 export default function AdminDashboard() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
   const [password, setPassword] = useState("");
-  const [authenticated, setAuthenticated] = useState(false);
+  const authenticated = useSyncExternalStore(
+    subscribeToAdminAuth,
+    getAdminAuthSnapshot,
+    () => false
+  );
 
-  useEffect(() => {
-    const auth = sessionStorage.getItem("admin_auth");
-    if (auth === "true") {
-      setAuthenticated(true);
-      loadProducts();
-    } else {
-      setLoading(false);
-    }
-  }, []);
-
-  const loadProducts = async () => {
+  const loadProducts = useCallback(async () => {
     try {
       const res = await fetch("/api/admin/products");
       if (res.ok) {
@@ -38,17 +53,23 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       console.error("Failed to load products:", error);
-    } finally {
-      setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (!authenticated) return;
+
+    const timer = window.setTimeout(() => {
+      void loadProducts();
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, [authenticated, loadProducts]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === process.env.NEXT_PUBLIC_ADMIN_PASSWORD || password === "lumayard2026") {
-      sessionStorage.setItem("admin_auth", "true");
-      setAuthenticated(true);
-      loadProducts();
+      updateAdminAuth(true);
     } else {
       alert("密码错误");
     }
@@ -64,7 +85,7 @@ export default function AdminDashboard() {
       if (res.ok) {
         setProducts(products.filter((p) => p.id !== id));
       }
-    } catch (error) {
+    } catch {
       alert("删除失败");
     }
   };
@@ -97,14 +118,6 @@ export default function AdminDashboard() {
     );
   }
 
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-gray-600">加载中...</div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="border-b bg-white">
@@ -116,8 +129,7 @@ export default function AdminDashboard() {
             </Link>
             <button
               onClick={() => {
-                sessionStorage.removeItem("admin_auth");
-                setAuthenticated(false);
+                updateAdminAuth(false);
               }}
               className="text-sm text-red-600 hover:text-red-700"
             >
@@ -195,9 +207,11 @@ export default function AdminDashboard() {
                     <td className="whitespace-nowrap px-6 py-4">
                       <div className="flex items-center">
                         {product.images?.[0] && (
-                          <img
+                          <Image
                             src={product.images[0]}
                             alt=""
+                            width={40}
+                            height={40}
                             className="mr-3 h-10 w-10 rounded object-cover"
                           />
                         )}

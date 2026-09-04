@@ -1,50 +1,39 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
+import {
+  ProductRecord,
+  readDatabase,
+  writeDatabase,
+} from "@/lib/database";
 
-const DB_PATH = path.join(process.cwd(), "data", "database.json");
-
-function readDB() {
-  try {
-    const data = fs.readFileSync(DB_PATH, "utf-8");
-    return JSON.parse(data);
-  } catch (error) {
-    return { products: [], categories: [] };
-  }
-}
-
-function writeDB(data: any) {
-  fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2), "utf-8");
-}
+type NewProduct = Omit<ProductRecord, "id" | "createdAt" | "updatedAt">;
 
 // GET /api/admin/products - 获取所有产品和分类
 export async function GET() {
-  const db = readDB();
+  const database = readDatabase();
   return NextResponse.json({
-    products: db.products || [],
-    categories: db.categories || [],
+    products: database.products,
+    categories: database.categories,
   });
 }
 
 // POST /api/admin/products - 创建新产品
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const db = readDB();
-
-    const newProduct = {
+    const product = (await request.json()) as NewProduct;
+    const database = readDatabase();
+    const timestamp = new Date().toISOString();
+    const newProduct: ProductRecord = {
       id: `prod_${Date.now()}`,
-      ...body,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      ...product,
+      createdAt: timestamp,
+      updatedAt: timestamp,
     };
 
-    db.products = db.products || [];
-    db.products.push(newProduct);
-    writeDB(db);
+    database.products.push(newProduct);
+    writeDatabase(database);
 
     return NextResponse.json({ success: true, product: newProduct });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to create product" },
       { status: 500 }

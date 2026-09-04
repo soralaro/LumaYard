@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { use } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -35,29 +35,29 @@ export default function ProductPage({ params }: { params: Promise<{ handle: stri
   const [selectedImage, setSelectedImage] = useState(0);
 
   useEffect(() => {
-    loadProduct();
-  }, [handle]);
-
-  const loadProduct = async () => {
-    try {
-      const res = await fetch(`/api/admin/products/${handle}`);
-      if (res.ok) {
-        const data = await res.json();
-        if (data.product.status === "published") {
-          setProduct(data.product);
+    const loadProduct = async () => {
+      try {
+        const res = await fetch(`/api/admin/products/${handle}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.product.status === "published") {
+            setProduct(data.product);
+          } else {
+            notFound();
+          }
         } else {
           notFound();
         }
-      } else {
+      } catch (error) {
+        console.error("Failed to load product:", error);
         notFound();
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Failed to load product:", error);
-      notFound();
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    void loadProduct();
+  }, [handle]);
 
   if (loading) {
     return (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { use } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -31,34 +31,26 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
     pdfUrl: "",
   });
 
-  useEffect(() => {
-    loadProduct();
-  }, [id]);
-
-  const loadProduct = async () => {
+  const loadProduct = useCallback(async () => {
     try {
-      console.log("Loading product:", id);
       const res = await fetch(`/api/admin/products/${id}`);
-      console.log("Response status:", res.status);
       if (res.ok) {
         const data = await res.json();
-        console.log("Loaded data:", data);
-        const p = data.product;
+        const product = data.product;
         setFormData({
-          title: p.title || "",
-          titleEn: p.titleEn || "",
-          price: p.price?.toString() || "",
-          category: p.category || "fences",
-          status: p.status || "draft",
-          description: p.description || "",
-          descriptionEn: p.descriptionEn || "",
-          features: (p.features || []).join("\n"),
-          images: (p.images || []).join("\n"),
-          specs: p.specs ? JSON.stringify(p.specs, null, 2) : "",
-          pdfUrl: p.pdfUrl || "",
+          title: product.title || "",
+          titleEn: product.titleEn || "",
+          price: product.price?.toString() || "",
+          category: product.category || "fences",
+          status: product.status || "draft",
+          description: product.description || "",
+          descriptionEn: product.descriptionEn || "",
+          features: (product.features || []).join("\n"),
+          images: (product.images || []).join("\n"),
+          specs: product.specs ? JSON.stringify(product.specs, null, 2) : "",
+          pdfUrl: product.pdfUrl || "",
         });
       } else {
-        console.error("Failed to load:", res.status);
         alert("加载产品失败");
       }
     } catch (error) {
@@ -67,7 +59,15 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      void loadProduct();
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, [loadProduct]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -192,7 +192,7 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
             </label>
             <select
               value={formData.status}
-              onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
+              onChange={(e) => setFormData({ ...formData, status: e.target.value as typeof formData.status })}
               className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
             >
               <option value="draft">草稿</option>
