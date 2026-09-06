@@ -37,7 +37,7 @@ export default function ProductPage({ params }: { params: Promise<{ handle: stri
   useEffect(() => {
     const loadProduct = async () => {
       try {
-        const res = await fetch(`/api/admin/products/${handle}`);
+        const res = await fetch(`/api/products/${handle}`);
         if (res.ok) {
           const data = await res.json();
           if (data.product.status === "published") {
@@ -58,6 +58,16 @@ export default function ProductPage({ params }: { params: Promise<{ handle: stri
 
     void loadProduct();
   }, [handle]);
+
+  useEffect(() => {
+    if (!product) return;
+    void fetch("/api/analytics/product-view", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productId: product.id, referrer: document.referrer }),
+      keepalive: true,
+    }).catch(() => undefined);
+  }, [product]);
 
   if (loading) {
     return (

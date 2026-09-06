@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
+import { getCurrentAdmin, writeAdminAuditLog } from "@/lib/admin-auth";
+
+const UPLOAD_TYPES = new Set(["products", "categories", "category-cover"]);
+const MAX_UPLOAD_SIZE = 10 * 1024 * 1024;
 
 export async function POST(request: NextRequest) {
   try {
+    const admin = await getCurrentAdmin();
+    if (!admin) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     const formData = await request.formData();
     const file = formData.get("file") as File;
 
@@ -15,7 +21,10 @@ export async function POST(request: NextRequest) {
     }
 
     // 获取文件类型
-    const fileType = formData.get("type") as string || "products";
+    const fileType = (formData.get("type") as string) || "products";
+    if (!UPLOAD_TYPES.has(fileType) || !file.type.startsWith("image/") || file.size > MAX_UPLOAD_SIZE) {
+      return NextResponse.json({ success: false, error: "Unsupported image upload" }, { status: 400 });
+    }
 
     // 创建上传目录
     const uploadDir = path.join(process.cwd(), "public", fileType);
@@ -35,6 +44,12 @@ export async function POST(request: NextRequest) {
 
     // 返回可访问的 URL
     const url = `/${fileType}/${fileName}`;
+    await writeAdminAuditLog(admin, request, "MEDIA_UPLOADED", "MediaAsset", fileName, undefined, {
+      fileName: originalName,
+      mimeType: file.type,
+      byteSize: file.size,
+      url,
+    });
 
     return NextResponse.json({
       success: true,

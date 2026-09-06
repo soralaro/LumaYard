@@ -1,16 +1,16 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
+import { getClientIp } from "@/lib/admin-auth";
+import { prisma } from "@/lib/prisma";
+import { lookupGeoLocation } from "@/lib/geoip";
 
 const attempts = new Map<string, { count: number; resetAt: number }>();
 const WINDOW_MS = 60_000;
 const MAX_ATTEMPTS = 5;
 
-function getClientKey(request: Request) {
-  return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-}
-
-export async function POST(request: Request) {
-  const key = getClientKey(request);
+export async function POST(request: NextRequest) {
+  const ipAddress = getClientIp(request);
+  const key = ipAddress ?? "unknown";
   const now = Date.now();
   const current = attempts.get(key);
   if (current && current.resetAt > now && current.count >= MAX_ATTEMPTS) return NextResponse.json({ error: "Too many inquiries. Please try again in a minute." }, { status: 429 });
@@ -29,13 +29,24 @@ export async function POST(request: Request) {
   if (!name || !email || !message) return NextResponse.json({ error: "Name, email, and message are required." }, { status: 400 });
   if (name.length > 80 || email.length > 254 || message.length > 4000 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return NextResponse.json({ error: "Please check your details and try again." }, { status: 400 });
 
+  const inquiry = await prisma.inquiry.create({
+    data: {
+      name,
+      email: email.toLowerCase(),
+      message,
+      source: "contact-form",
+      visitorId: request.cookies.get("lumayard_visitor")?.value || null,
+      ipAddress,
+      ...(await lookupGeoLocation(ipAddress)),
+      userAgent: request.headers.get("user-agent"),
+    },
+  });
+
   if (process.env.RESEND_API_KEY) {
     try {
       const resend = new Resend(process.env.RESEND_API_KEY);
       await resend.emails.send({ from: process.env.CONTACT_FROM_EMAIL ?? "LumaYard <onboarding@resend.dev>", to: process.env.CONTACT_TO_EMAIL ?? email, replyTo: email, subject: `New LumaYard inquiry from ${name}`, text: `Name: ${name}\nEmail: ${email}\n\n${message}` });
-    } catch {
-      return NextResponse.json({ error: "We could not deliver your inquiry. Please try again shortly." }, { status: 502 });
-    }
+    } catch { /* The inquiry is saved and can be handled from the admin panel. */ }
   }
-  return NextResponse.json({ message: "Thanks. We will be in touch shortly." });
+  return NextResponse.json({ message: "Thanks. We will be in touch shortly.", inquiryId: inquiry.id });
 }

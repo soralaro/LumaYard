@@ -8,12 +8,21 @@ type IconName = "arrow" | "menu" | "close";
 type Product = { id: string; title: string; titleEn: string; price: number; category: string; images: string[]; status: string };
 type CategoryData = { id: string; name: string; nameEn: string; description: string; slug: string; coverImage?: string };
 type ProductCategory = { id: string; title: string; description: string };
+type ContactSettings = { email: string; whatsappNumber: string; linkedinUrl: string };
+const defaultContactSettings: ContactSettings = { email: "hello@lumayard.com", whatsappNumber: "15551234567", linkedinUrl: "" };
 
 const productCategories: ProductCategory[] = [
   { id: "fences", title: "Fences & Privacy", description: "Define your boundary beautifully." },
   { id: "lighting", title: "Garden Lighting", description: "Extend every evening outdoors." },
   { id: "robotics", title: "Garden Robotics", description: "More time in your garden, less upkeep." },
   { id: "energy", title: "Home Energy", description: "Thoughtful power for outdoor living." },
+];
+
+const brandValues = [
+  { title: "Made for outdoors", description: "Products chosen for real gardens, patios, and changing weather." },
+  { title: "Ready when you are", description: "Practical solutions designed to make outdoor living easier." },
+  { title: "Considered by design", description: "Useful, durable pieces that sit beautifully in your space." },
+  { title: "Support from first step", description: "From choosing one product to planning the complete outdoor space." },
 ];
 
 const heroImage = "https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=2400&q=90";
@@ -34,6 +43,7 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<CategoryData[]>([]);
+  const [contactSettings, setContactSettings] = useState<ContactSettings>(defaultContactSettings);
 
   useEffect(() => {
     const loadStorefront = async () => {
@@ -50,6 +60,8 @@ export default function Home() {
     void loadStorefront();
   }, []);
 
+  useEffect(() => { void fetch("/api/site-settings").then(async (response) => { if (response.ok) setContactSettings(await response.json()); }); }, []);
+
   const featuredProducts = products.slice(0, 4);
   const closeMenu = () => setMenuOpen(false);
 
@@ -63,14 +75,14 @@ export default function Home() {
         <div className="relative z-20 bg-[var(--forest-deep)] px-4 py-2 text-center text-[9px] font-bold uppercase tracking-[0.18em] text-[var(--cream)] md:bg-transparent md:text-white">
           Outdoor living, beautifully considered <span className="mx-2 text-[var(--gold)]">·</span> Built for every season
         </div>
-        <header className="relative z-20 bg-[var(--paper)]/95 text-[var(--forest)] backdrop-blur-sm md:border-b md:border-white/20 md:bg-transparent md:text-[var(--cream)] md:backdrop-blur-none">
+        <header className="relative z-20 border-b border-[var(--forest)]/10 bg-[var(--paper)]/88 text-[var(--forest)] backdrop-blur-sm md:border-[var(--cream)]/30 md:bg-[rgba(245,242,235,.2)] md:text-[var(--forest)] md:backdrop-blur-md">
           <div className="mx-auto flex h-18 max-w-[1800px] items-center justify-between px-5 sm:px-8 lg:h-21 lg:px-12 xl:px-16">
             <Link href="/" className="font-[family-name:var(--font-display)] text-3xl tracking-[0.02em]" aria-label="LumaYard home">Luma<span className="italic">Yard</span></Link>
-            <nav aria-label="Primary navigation" className="hidden items-center gap-7 font-[family-name:var(--font-display)] text-3xl leading-none xl:flex">
+            <nav aria-label="Primary navigation" className="hidden items-center gap-8 font-[family-name:var(--font-display)] text-3xl leading-none text-[var(--forest)] xl:flex">
               <Link href="#categories" className="homepage-link">Collections</Link><Link href="/shop" className="homepage-link">Shop</Link><Link href="#about" className="homepage-link">Our approach</Link><Link href="/contact" className="homepage-link">Contact</Link>
             </nav>
-            <button type="button" aria-controls="mobile-navigation" aria-expanded={menuOpen} aria-label={menuOpen ? "Close menu" : "Open menu"} onClick={() => setMenuOpen((isOpen) => !isOpen)} className="grid h-10 w-10 place-items-center border border-[var(--forest)]/25 md:border-white/40 xl:hidden"><Icon name={menuOpen ? "close" : "menu"} /></button>
-            <Link href="/contact" className="hidden border-b border-current pb-1 font-[family-name:var(--font-display)] text-3xl leading-none xl:block">Plan your space</Link>
+            <button type="button" aria-controls="mobile-navigation" aria-expanded={menuOpen} aria-label={menuOpen ? "Close menu" : "Open menu"} onClick={() => setMenuOpen((isOpen) => !isOpen)} className="grid h-10 w-10 place-items-center border border-[var(--forest)]/25 xl:hidden"><Icon name={menuOpen ? "close" : "menu"} /></button>
+            <Link href="/contact" className="hidden border-b border-[var(--forest)]/55 pb-1 font-[family-name:var(--font-display)] text-2xl leading-none text-[var(--forest)] transition hover:border-[var(--gold)] hover:text-[var(--gold)] xl:block">Plan your space</Link>
           </div>
         </header>
         <div className="relative z-10 flex md:min-h-[calc(68svh-6.75rem)] md:items-end">
@@ -89,8 +101,17 @@ export default function Home() {
         <nav aria-label="Mobile navigation" className="mt-20 flex flex-col gap-7 font-[family-name:var(--font-display)] text-4xl"><Link href="#categories" onClick={closeMenu}>Collections</Link><Link href="/shop" onClick={closeMenu}>Shop</Link><Link href="#about" onClick={closeMenu}>Our approach</Link><Link href="/contact" onClick={closeMenu}>Contact</Link></nav>
       </div>}
 
+      <section aria-label="Why LumaYard" className="border-y border-[var(--forest)]/10 bg-[#e7dfd1] px-6 sm:px-10 lg:px-14 xl:px-16">
+        <div className="mx-auto grid max-w-[2100px] grid-cols-2 lg:grid-cols-4">
+          {brandValues.map((value, index) => <div key={value.title} className={`py-7 sm:py-8 lg:px-8 lg:py-9 ${index % 2 === 1 ? "border-l border-[var(--forest)]/10" : ""} ${index >= 2 ? "border-t border-[var(--forest)]/10 lg:border-t-0" : ""} ${index > 0 ? "lg:border-l lg:border-[var(--forest)]/10" : ""} ${index % 2 === 0 ? "pr-5 sm:pr-8" : "pl-5 sm:pl-8"}`}>
+            <h2 className="font-[family-name:var(--font-display)] text-2xl leading-tight text-[var(--forest)] lg:text-[1.65rem]">{value.title}</h2>
+            <p className="mt-3 max-w-[31ch] text-xs leading-5 text-[var(--ink)]/68 sm:text-sm sm:leading-6">{value.description}</p>
+          </div>)}
+        </div>
+      </section>
+
       <section id="categories" className="bg-[var(--collection)] text-[var(--forest)]">
-        <div className="flex flex-col items-center gap-4 px-6 pb-8 pt-16 text-center sm:pt-20 lg:pb-10"><div><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--moss)]">Explore by need</p><h2 className="mt-3 font-[family-name:var(--font-display)] text-4xl leading-none tracking-[-0.04em] sm:text-5xl">Shape your outdoors.</h2></div><Link href="/shop" className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--forest)]/70 hover:text-[var(--forest)] sm:inline-flex">View all products <Icon name="arrow" className="ml-2 h-4 w-4" /></Link></div>
+        <div className="flex flex-col items-center gap-4 px-6 pb-8 pt-12 text-center sm:pt-16 lg:pb-10"><div><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--moss)]">Explore by need</p><h2 className="mt-3 font-[family-name:var(--font-display)] text-4xl leading-none tracking-[-0.04em] sm:text-5xl">Shape your outdoors.</h2></div><Link href="/shop" className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--forest)]/70 hover:text-[var(--forest)] sm:inline-flex">View all products <Icon name="arrow" className="ml-2 h-4 w-4" /></Link></div>
         <div className="px-6 pb-12 sm:px-10 lg:px-14 lg:pb-14 xl:px-16"><div className="mx-auto flex max-w-[2100px] snap-x snap-mandatory gap-4 overflow-x-auto bg-[var(--collection)] [scrollbar-width:none] lg:grid lg:grid-cols-4 lg:gap-7 lg:overflow-visible">
           {productCategories.map((category, index) => {
             const categoryData = categories.find((item) => item.id === category.id);
@@ -115,7 +136,7 @@ export default function Home() {
 
       <section className="bg-[var(--gold)] px-6 py-14 sm:px-10 lg:px-14 xl:px-16"><div className="mx-auto flex max-w-[1800px] flex-col justify-between gap-7 md:flex-row md:items-center"><h2 className="max-w-2xl font-[family-name:var(--font-display)] text-4xl leading-none tracking-[-0.04em] sm:text-5xl">Tell us what your outdoor space needs.</h2><Link href="/contact" className="homepage-button shrink-0">Start a conversation <Icon name="arrow" className="h-4 w-4" /></Link></div></section>
 
-      <footer className="bg-[var(--forest-deep)] px-6 pb-7 pt-14 text-[var(--cream)] sm:px-10 lg:px-14 xl:px-16"><div className="mx-auto max-w-[1800px]"><div className="grid gap-10 border-b border-white/15 pb-12 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr]"><div><Link href="/" className="font-[family-name:var(--font-display)] text-4xl" aria-label="LumaYard home">Luma<span className="italic">Yard</span></Link><p className="mt-4 max-w-sm text-sm leading-6 text-white/65">Professional outdoor products for a more beautiful, useful yard.</p></div><div><h3 className="text-[9px] font-bold uppercase tracking-[0.18em] text-[var(--gold)]">Shop</h3><div className="mt-4 flex flex-col gap-2.5 text-sm text-white/70">{productCategories.map((category) => <Link key={category.id} href={`/shop?category=${category.id}`} className="hover:text-white">{category.title}</Link>)}</div></div><div><h3 className="text-[9px] font-bold uppercase tracking-[0.18em] text-[var(--gold)]">Support</h3><div className="mt-4 flex flex-col gap-2.5 text-sm text-white/70"><Link href="/contact" className="hover:text-white">Contact us</Link><Link href="/shop" className="hover:text-white">All products</Link><Link href="/shipping" className="hover:text-white">Shipping</Link><Link href="/returns" className="hover:text-white">Returns</Link></div></div></div><div className="flex flex-col justify-between gap-3 pt-6 text-[9px] font-semibold uppercase tracking-[0.14em] text-white/45 sm:flex-row"><span>© 2026 LumaYard. Outdoor living, beautifully considered.</span><span><Link href="/privacy" className="hover:text-white/70">Privacy</Link><span className="mx-2">·</span><Link href="/terms" className="hover:text-white/70">Terms</Link></span></div></div></footer>
+      <footer className="bg-[var(--forest-deep)] px-6 pb-7 pt-14 text-[var(--cream)] sm:px-10 lg:px-14 xl:px-16"><div className="mx-auto max-w-[1800px]"><div className="grid gap-10 border-b border-white/15 pb-12 sm:grid-cols-2 lg:grid-cols-[1.35fr_1fr_1fr_1fr]"><div><Link href="/" className="font-[family-name:var(--font-display)] text-4xl" aria-label="LumaYard home">Luma<span className="italic">Yard</span></Link><p className="mt-4 max-w-sm text-sm leading-6 text-white/65">Professional outdoor products for a more beautiful, useful yard.</p></div><div><h3 className="text-[9px] font-bold uppercase tracking-[0.18em] text-[var(--gold)]">Shop</h3><div className="mt-4 flex flex-col gap-2.5 text-sm text-white/70">{productCategories.map((category) => <Link key={category.id} href={`/shop?category=${category.id}`} className="hover:text-white">{category.title}</Link>)}</div></div><div><h3 className="text-[9px] font-bold uppercase tracking-[0.18em] text-[var(--gold)]">Support</h3><div className="mt-4 flex flex-col gap-2.5 text-sm text-white/70"><Link href="/contact" className="hover:text-white">Contact us</Link><Link href="/shop" className="hover:text-white">All products</Link><Link href="/shipping" className="hover:text-white">Shipping</Link><Link href="/returns" className="hover:text-white">Returns</Link></div></div><div><h3 className="text-[9px] font-bold uppercase tracking-[0.18em] text-[var(--gold)]">Connect</h3><div className="mt-4 flex flex-col gap-2.5 text-sm text-white/70"><a href={`mailto:${contactSettings.email}`} className="hover:text-white">Email us</a><a href={`https://wa.me/${contactSettings.whatsappNumber.replace(/[^\d]/g, "")}`} target="_blank" rel="noreferrer" className="hover:text-white">WhatsApp</a>{contactSettings.linkedinUrl && <a href={contactSettings.linkedinUrl} target="_blank" rel="noreferrer" className="hover:text-white">LinkedIn</a>}</div></div></div><div className="flex flex-col justify-between gap-3 pt-6 text-[9px] font-semibold uppercase tracking-[0.14em] text-white/45 sm:flex-row"><span>© 2026 LumaYard. Outdoor living, beautifully considered.</span><span><Link href="/privacy" className="hover:text-white/70">Privacy</Link><span className="mx-2">·</span><Link href="/terms" className="hover:text-white/70">Terms</Link></span></div></div></footer>
     </main>
   );
 }

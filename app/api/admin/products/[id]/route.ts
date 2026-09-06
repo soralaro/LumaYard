@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  ProductRecord,
-  readDatabase,
-  writeDatabase,
-} from "@/lib/database";
+import { ProductRecord } from "@/lib/database";
+import { getCurrentAdmin, writeAdminAuditLog } from "@/lib/admin-auth";
+import { deleteProduct, findProduct, updateProduct } from "@/lib/product-store";
 
 type ProductUpdate = Partial<
   Omit<ProductRecord, "id" | "createdAt" | "updatedAt">
@@ -14,9 +12,10 @@ export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const admin = await getCurrentAdmin();
+  if (!admin) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
   const { id } = await params;
-  const database = readDatabase();
-  const product = database.products.find((item) => item.id === id);
+  const product = await findProduct(id);
 
   if (!product) {
     return NextResponse.json(
@@ -34,28 +33,25 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const admin = await getCurrentAdmin();
+    if (!admin) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     const { id } = await params;
     const productUpdate = (await request.json()) as ProductUpdate;
-    const database = readDatabase();
-    const index = database.products.findIndex((item) => item.id === id);
-
-    if (index === -1) {
+    const previous = await findProduct(id);
+    if (!previous) {
       return NextResponse.json(
         { success: false, error: "Product not found" },
         { status: 404 }
       );
     }
 
-    database.products[index] = {
-      ...database.products[index],
-      ...productUpdate,
-      updatedAt: new Date().toISOString(),
-    };
-    writeDatabase(database);
+    const product = await updateProduct(id, { ...previous, ...productUpdate });
+    if (!product) return NextResponse.json({ success: false, error: "Product not found" }, { status: 404 });
+    await writeAdminAuditLog(admin, request, "PRODUCT_UPDATED", "Product", id, previous, product);
 
     return NextResponse.json({
       success: true,
-      product: database.products[index],
+      product,
     });
   } catch {
     return NextResponse.json(
@@ -71,19 +67,18 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const admin = await getCurrentAdmin();
+    if (!admin) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     const { id } = await params;
-    const database = readDatabase();
-    const index = database.products.findIndex((item) => item.id === id);
-
-    if (index === -1) {
+    const deletedProduct = await deleteProduct(id);
+    if (!deletedProduct) {
       return NextResponse.json(
         { success: false, error: "Product not found" },
         { status: 404 }
       );
     }
 
-    database.products.splice(index, 1);
-    writeDatabase(database);
+    await writeAdminAuditLog(admin, _request, "PRODUCT_DELETED", "Product", id, deletedProduct);
 
     return NextResponse.json({ success: true });
   } catch {

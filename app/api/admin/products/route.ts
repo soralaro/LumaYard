@@ -1,36 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  ProductRecord,
-  readDatabase,
-  writeDatabase,
-} from "@/lib/database";
+import { ProductRecord } from "@/lib/database";
+import { getCurrentAdmin, writeAdminAuditLog } from "@/lib/admin-auth";
+import { createProduct, listAdminProducts } from "@/lib/product-store";
+import { listCategories } from "@/lib/category-store";
 
 type NewProduct = Omit<ProductRecord, "id" | "createdAt" | "updatedAt">;
 
 // GET /api/admin/products - 获取所有产品和分类
 export async function GET() {
-  const database = readDatabase();
+  const admin = await getCurrentAdmin();
+  if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const [products, categories] = await Promise.all([listAdminProducts(), listCategories()]);
   return NextResponse.json({
-    products: database.products,
-    categories: database.categories,
+    products,
+    categories,
   });
 }
 
 // POST /api/admin/products - 创建新产品
 export async function POST(request: NextRequest) {
   try {
+    const admin = await getCurrentAdmin();
+    if (!admin) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     const product = (await request.json()) as NewProduct;
-    const database = readDatabase();
-    const timestamp = new Date().toISOString();
-    const newProduct: ProductRecord = {
-      id: `prod_${Date.now()}`,
-      ...product,
-      createdAt: timestamp,
-      updatedAt: timestamp,
-    };
-
-    database.products.push(newProduct);
-    writeDatabase(database);
+    const newProduct = await createProduct(product);
+    await writeAdminAuditLog(admin, request, "PRODUCT_CREATED", "Product", newProduct.id, undefined, newProduct);
 
     return NextResponse.json({ success: true, product: newProduct });
   } catch {

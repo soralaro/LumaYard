@@ -15,7 +15,9 @@
     "db:logs": "docker compose -f docker-compose.dev.yml logs -f postgres",
     "dev:setup": "npm run prisma:generate && npm run prisma:push && npm run products:import",
     "admin:create": "tsx scripts/create-admin.ts",
-    "products:import": "tsx scripts/import-products.ts"
+    "products:import": "tsx scripts/import-products.ts",
+    "products:import-admin": "tsx scripts/import-admin-products.ts",
+    "categories:import": "tsx scripts/import-categories.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.967.0",

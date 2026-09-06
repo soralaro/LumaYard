@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -14,35 +14,15 @@ type Product = {
   createdAt: string;
 };
 
-const adminAuthChangeEvent = "lumayard-admin-auth-change";
-
-function getAdminAuthSnapshot() {
-  return typeof window !== "undefined" && sessionStorage.getItem("admin_auth") === "true";
-}
-
-function subscribeToAdminAuth(onStoreChange: () => void) {
-  window.addEventListener(adminAuthChangeEvent, onStoreChange);
-  return () => window.removeEventListener(adminAuthChangeEvent, onStoreChange);
-}
-
-function updateAdminAuth(authenticated: boolean) {
-  if (authenticated) {
-    sessionStorage.setItem("admin_auth", "true");
-  } else {
-    sessionStorage.removeItem("admin_auth");
-  }
-
-  window.dispatchEvent(new Event(adminAuthChangeEvent));
-}
+type AdminUser = { id: string; email: string; name: string | null; role: "OWNER" | "EDITOR" };
 
 export default function AdminDashboard() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const authenticated = useSyncExternalStore(
-    subscribeToAdminAuth,
-    getAdminAuthSnapshot,
-    () => false
-  );
+  const [admin, setAdmin] = useState<AdminUser | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
+  const [loginError, setLoginError] = useState("");
 
   const loadProducts = useCallback(async () => {
     try {
@@ -57,22 +37,47 @@ export default function AdminDashboard() {
   }, []);
 
   useEffect(() => {
-    if (!authenticated) return;
+    void fetch("/api/admin/auth/me")
+      .then(async (response) => {
+        if (response.ok) {
+          const data = (await response.json()) as { user: AdminUser };
+          setAdmin(data.user);
+        }
+      })
+      .finally(() => setAuthChecked(true));
+  }, []);
+
+  useEffect(() => {
+    if (!admin) return;
 
     const timer = window.setTimeout(() => {
       void loadProducts();
     }, 0);
 
     return () => window.clearTimeout(timer);
-  }, [authenticated, loadProducts]);
+  }, [admin, loadProducts]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === process.env.NEXT_PUBLIC_ADMIN_PASSWORD || password === "lumayard2026") {
-      updateAdminAuth(true);
-    } else {
-      alert("密码错误");
+    setLoginError("");
+    const response = await fetch("/api/admin/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    if (!response.ok) {
+      setLoginError("邮箱或密码不正确");
+      return;
     }
+    const data = (await response.json()) as { user: AdminUser };
+    setPassword("");
+    setAdmin(data.user);
+  };
+
+  const handleLogout = async () => {
+    await fetch("/api/admin/auth/logout", { method: "POST" });
+    setProducts([]);
+    setAdmin(null);
   };
 
   const handleDelete = async (id: string) => {
@@ -90,22 +95,41 @@ export default function AdminDashboard() {
     }
   };
 
-  if (!authenticated) {
+  if (!authChecked) {
+    return <div className="min-h-screen bg-gray-50" />;
+  }
+
+  if (!admin) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
         <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
           <h1 className="mb-6 text-2xl font-bold text-gray-900">LumaYard 管理后台</h1>
           <form onSubmit={handleLogin}>
             <label className="mb-2 block text-sm font-medium text-gray-700">
-              管理密码
+              管理邮箱
+            </label>
+            <input
+              type="email"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="mb-4 w-full rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
+              placeholder="admin@example.com"
+              required
+            />
+            <label className="mb-2 block text-sm font-medium text-gray-700">
+              密码
             </label>
             <input
               type="password"
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="mb-4 w-full rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
               placeholder="输入管理密码"
+              required
             />
+            {loginError && <p className="mb-4 text-sm text-red-600">{loginError}</p>}
             <button
               type="submit"
               className="w-full rounded-md bg-blue-600 py-2 text-white hover:bg-blue-700"
@@ -124,13 +148,13 @@ export default function AdminDashboard() {
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <h1 className="text-2xl font-bold text-gray-900">LumaYard 管理后台</h1>
           <div className="flex gap-4">
+            {admin.role === "OWNER" && <Link href="/admin/users" className="text-sm text-gray-600 hover:text-gray-900">管理员</Link>}
+            {admin.role === "OWNER" && <Link href="/admin/audit-log" className="text-sm text-gray-600 hover:text-gray-900">访问记录</Link>}
             <Link href="/" className="text-sm text-gray-600 hover:text-gray-900">
               查看网站
             </Link>
             <button
-              onClick={() => {
-                updateAdminAuth(false);
-              }}
+              onClick={handleLogout}
               className="text-sm text-red-600 hover:text-red-700"
             >
               退出
@@ -140,7 +164,7 @@ export default function AdminDashboard() {
       </header>
 
       <main className="mx-auto max-w-7xl px-6 py-8">
-        <div className="mb-8 grid gap-4 md:grid-cols-3">
+        <div className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
           <Link
             href="/admin/products/new"
             className="rounded-lg bg-blue-50 p-6 text-center hover:bg-blue-100"
@@ -167,6 +191,26 @@ export default function AdminDashboard() {
             <h3 className="font-semibold text-gray-900">查看网站</h3>
             <p className="text-sm text-gray-600">预览前台展示</p>
           </Link>
+
+          <Link
+            href="/admin/inquiries"
+            className="rounded-lg bg-amber-50 p-6 text-center hover:bg-amber-100"
+          >
+            <div className="mb-2 text-3xl font-bold text-amber-700">@</div>
+            <h3 className="font-semibold text-gray-900">客户询盘</h3>
+            <p className="text-sm text-gray-600">查看和处理客户留言</p>
+          </Link>
+
+          <Link
+            href="/admin/analytics"
+            className="rounded-lg bg-cyan-50 p-6 text-center hover:bg-cyan-100"
+          >
+            <div className="mb-2 text-3xl font-bold text-cyan-800">#</div>
+            <h3 className="font-semibold text-gray-900">商品兴趣</h3>
+            <p className="text-sm text-gray-600">查看客户浏览的商品</p>
+          </Link>
+
+          {admin.role === "OWNER" && <Link href="/admin/settings" className="rounded-lg bg-rose-50 p-6 text-center hover:bg-rose-100"><div className="mb-2 text-3xl font-bold text-rose-700">@</div><h3 className="font-semibold text-gray-900">联系信息</h3><p className="text-sm text-gray-600">编辑邮箱、WhatsApp 和社交链接</p></Link>}
         </div>
 
         <div className="mb-6 flex items-center justify-between">

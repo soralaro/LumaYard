@@ -63,6 +63,10 @@ model Session {
   tokenHash String @unique
   expiresAt DateTime
   ipAddress String?
+  countryCode String?
+  countryName String?
+  regionName String?
+  city String?
   userAgent String?
   createdAt DateTime @default(now())
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -72,11 +76,17 @@ model Session {
 
 model Product {
   id String @id @default(cuid())
+  legacyId String? @unique
   handle String @unique
   sku String? @unique
   title String
   summary String?
   description String @db.Text
+  legacyCategory String?
+  legacyImages Json?
+  legacyFeatures Json?
+  legacySpecs Json?
+  legacyPdfUrl String?
   status ProductStatus @default(DRAFT)
   price Decimal @db.Decimal(10, 2)
   currency String @default("USD")
@@ -100,6 +110,7 @@ model Product {
   sourceRelations ProductRelation[] @relation("SourceProduct")
   targetRelations ProductRelation[] @relation("TargetProduct")
   inquiries Inquiry[]
+  pageViews PageView[]
   @@index([status, publishedAt])
   @@index([updatedAt])
 }
@@ -150,7 +161,9 @@ model Collection {
   id String @id @default(cuid())
   handle String @unique
   name String
+  nameEn String?
   description String? @db.Text
+  coverImage String?
   sortOrder Int @default(0)
   products ProductCollection[]
 }
@@ -213,6 +226,13 @@ model Inquiry {
   message String @db.Text
   productId String?
   source String @default("contact-form")
+  visitorId String?
+  ipAddress String?
+  countryCode String?
+  countryName String?
+  regionName String?
+  city String?
+  userAgent String?
   status InquiryStatus @default(NEW)
   internalNotes String? @db.Text
   assignedToId String?
@@ -220,6 +240,29 @@ model Inquiry {
   updatedAt DateTime @updatedAt
   product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
   @@index([status, createdAt])
+  @@index([ipAddress, createdAt])
+  @@index([countryCode, regionName, city])
+  @@index([visitorId, createdAt])
+}
+
+model PageView {
+  id String @id @default(cuid())
+  visitorId String
+  path String
+  productId String?
+  ipAddress String?
+  countryCode String?
+  countryName String?
+  regionName String?
+  city String?
+  userAgent String?
+  referrer String?
+  createdAt DateTime @default(now())
+  product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  @@index([productId, createdAt])
+  @@index([visitorId, createdAt])
+  @@index([ipAddress, createdAt])
+  @@index([countryCode, regionName, city])
 }
 
 model SiteSetting {
