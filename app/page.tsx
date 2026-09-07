@@ -75,9 +75,9 @@ export default function Home() {
         <div className="relative z-20 bg-[var(--forest-deep)] px-4 py-2 text-center text-[9px] font-bold uppercase tracking-[0.18em] text-[var(--cream)] md:bg-transparent md:text-white">
           Outdoor living, beautifully considered <span className="mx-2 text-[var(--gold)]">·</span> Built for every season
         </div>
-        <header className="relative z-20 border-b border-[var(--forest)]/10 bg-[var(--paper)]/88 text-[var(--forest)] backdrop-blur-sm md:border-[var(--cream)]/30 md:bg-[rgba(245,242,235,.2)] md:text-[var(--forest)] md:backdrop-blur-md">
+        <header className="relative z-20 border-b border-[var(--forest)]/10 bg-[var(--paper)]/88 text-[var(--forest)] backdrop-blur-sm md:border-b-0 md:bg-[rgba(245,242,235,.05)] md:text-[var(--forest)] md:backdrop-blur-md">
           <div className="mx-auto flex h-18 max-w-[1800px] items-center justify-between px-5 sm:px-8 lg:h-21 lg:px-12 xl:px-16">
-            <Link href="/" className="font-[family-name:var(--font-display)] text-3xl tracking-[0.02em]" aria-label="LumaYard home">Luma<span className="italic">Yard</span></Link>
+            <Link href="/" className="font-[family-name:var(--font-display)] text-3xl tracking-[0.02em] max-md:text-[var(--forest)] md:!text-white md:drop-shadow-[0_1px_2px_rgba(0,0,0,.35)]" aria-label="LumaYard home">Luma<span className="italic">Yard</span></Link>
             <nav aria-label="Primary navigation" className="hidden items-center gap-8 font-[family-name:var(--font-display)] text-3xl leading-none text-[var(--forest)] xl:flex">
               <Link href="#categories" className="homepage-link">Collections</Link><Link href="/shop" className="homepage-link">Shop</Link><Link href="#about" className="homepage-link">Our approach</Link><Link href="/contact" className="homepage-link">Contact</Link>
             </nav>
