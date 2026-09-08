@@ -28,6 +28,29 @@ export default function NewProduct() {
     pdfUrl: "",
   });
 
+  const handleMediaUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+    kind: "image" | "document"
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const upload = new FormData();
+    upload.append("file", file);
+    upload.append("type", "products");
+    try {
+      const response = await fetch("/api/admin/upload", { method: "POST", body: upload });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Upload failed");
+      setFormData((current) => kind === "image"
+        ? { ...current, images: [current.images, data.url].filter(Boolean).join("\n") }
+        : { ...current, pdfUrl: data.url });
+      event.target.value = "";
+    } catch (error) {
+      alert(`上传失败：${error instanceof Error ? error.message : "请重试"}`);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -208,8 +231,9 @@ export default function NewProduct() {
               placeholder="/products/fence-001.jpg&#10;/products/fence-001-detail.jpg&#10;https://example.com/image.jpg"
             />
             <p className="mt-1 text-xs text-gray-500">
-              每行一个图片 URL，可以是本地路径（/products/...）或完整 URL
+              可手动输入 URL，或选择本地图片上传至媒体库。
             </p>
+            <input type="file" accept="image/jpeg,image/png,image/webp,image/avif" onChange={(event) => void handleMediaUpload(event, "image")} className="mt-3 block w-full text-sm" />
           </div>
 
           <div className="mb-6">
@@ -245,6 +269,7 @@ export default function NewProduct() {
               className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
               placeholder="/docs/fence-001-specs.pdf"
             />
+            <input type="file" accept="application/pdf" onChange={(event) => void handleMediaUpload(event, "document")} className="mt-3 block w-full text-sm" />
           </div>
 
           <div className="flex gap-4">

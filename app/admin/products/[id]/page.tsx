@@ -31,6 +31,29 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
     pdfUrl: "",
   });
 
+  const handleMediaUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+    kind: "image" | "document"
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const upload = new FormData();
+    upload.append("file", file);
+    upload.append("type", "products");
+    try {
+      const response = await fetch("/api/admin/upload", { method: "POST", body: upload });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Upload failed");
+      setFormData((current) => kind === "image"
+        ? { ...current, images: [current.images, data.url].filter(Boolean).join("\n") }
+        : { ...current, pdfUrl: data.url });
+      event.target.value = "";
+    } catch (error) {
+      alert(`上传失败：${error instanceof Error ? error.message : "请重试"}`);
+    }
+  };
+
   const loadProduct = useCallback(async () => {
     try {
       const res = await fetch(`/api/admin/products/${id}`);
@@ -235,6 +258,7 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
               rows={5}
               className="w-full rounded-md border border-gray-300 px-4 py-2 font-mono text-sm focus:border-blue-500 focus:outline-none"
             />
+            <input type="file" accept="image/jpeg,image/png,image/webp,image/avif" onChange={(event) => void handleMediaUpload(event, "image")} className="mt-3 block w-full text-sm" />
           </div>
 
           <div className="mb-6">
@@ -272,6 +296,7 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
               onChange={(e) => setFormData({ ...formData, pdfUrl: e.target.value })}
               className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
             />
+            <input type="file" accept="application/pdf" onChange={(event) => void handleMediaUpload(event, "document")} className="mt-3 block w-full text-sm" />
           </div>
 
           <div className="flex gap-4">

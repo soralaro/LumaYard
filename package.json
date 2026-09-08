@@ -17,7 +17,8 @@
     "admin:create": "tsx scripts/create-admin.ts",
     "products:import": "tsx scripts/import-products.ts",
     "products:import-admin": "tsx scripts/import-admin-products.ts",
-    "categories:import": "tsx scripts/import-categories.ts"
+    "categories:import": "tsx scripts/import-categories.ts",
+    "media:migrate-r2": "tsx scripts/migrate-local-media-to-r2.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.967.0",

@@ -46,10 +46,11 @@ ADMIN_SESSION_SECRET=replace-with-a-different-random-secret
 DATABASE_URL=postgresql://lumayard:replace-with-a-long-random-password@127.0.0.1:5432/lumayard?schema=public
 S3_ENDPOINT=https://<account-id>.r2.cloudflarestorage.com
 S3_REGION=auto
-S3_BUCKET=lumayard-media
+S3_BUCKET=lumayard
 S3_ACCESS_KEY_ID=replace-with-r2-access-key
 S3_SECRET_ACCESS_KEY=replace-with-r2-secret-key
-S3_PUBLIC_URL=https://media.你的域名.com
+# Optional. Without a custom media domain, the app serves R2 objects at /media/<key>.
+# S3_PUBLIC_URL=https://media.你的域名.com
 ```
 
 `.env` 不要提交到 Git。还要把 `data/products.ts` 中的 Stripe 占位链接替换成真实 Payment Links。
@@ -80,7 +81,9 @@ npm run admin:create -- owner@example.com 'a-long-unique-admin-password' 'Site O
 npm run products:import
 ```
 
-在 R2 创建 bucket 和带该 bucket 读写权限的 API token，把 `.env` 中的 `S3_` 变量填完整，并把公开媒体域名放在 `S3_PUBLIC_URL`。为该 bucket 配置 CORS：允许你的站点域名和 `http://localhost:3000` 访问 `GET`、`PUT`，允许 `Content-Type` 请求头。随后后台编辑产品时可直接选择 JPEG、PNG、WebP、AVIF 图片，或上传 PDF 到媒体库。图片上限 15 MB，PDF 上限 25 MB。
+在 R2 创建仅限 `lumayard` bucket 读写权限的 API token，把 `.env` 中的 `S3_ENDPOINT`、`S3_BUCKET`、`S3_ACCESS_KEY_ID`、`S3_SECRET_ACCESS_KEY` 填完整。后台上传由服务端写入 R2，前台默认经 `/media/<key>` 安全读取，因此不需要把密钥、临时上传链接或 R2 `r2.dev` 域名暴露给浏览器。绑定 `media.你的域名.com` 后可选填 `S3_PUBLIC_URL` 让 CDN 直接提供媒体。随后后台可上传 JPEG、PNG、WebP、AVIF 图片或 PDF；图片上限 15 MB，PDF 上限 25 MB。
+
+现有本地媒体迁移前先备份数据库和 `public/`。填好 R2 变量后执行 `npm run media:migrate-r2`。脚本只上传 `/uploads/`、`/products/`、`/categories/`、`/category-cover/` 下被数据库引用的文件，确认对象上传成功后才更新数据库 URL；不会删除任何本地文件，并可重复运行。
 
 ## 4. 构建并启动
 
