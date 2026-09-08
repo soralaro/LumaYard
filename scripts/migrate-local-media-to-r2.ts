@@ -1,8 +1,11 @@
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { loadEnvConfig } from "@next/env";
 import { prisma } from "../lib/prisma";
 import { mediaUrl, storageConfigured, uploadObject } from "../lib/storage";
+
+loadEnvConfig(process.cwd());
 
 const localPrefixes = ["/uploads/", "/products/", "/categories/", "/category-cover/"];
 const mimeTypes: Record<string, string> = {
