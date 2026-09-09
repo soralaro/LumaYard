@@ -14,6 +14,8 @@ const mediaPattern = mediaUrl
 
 const nextConfig: NextConfig = {
   images: {
+    qualities: [75, 90, 99],
+    unoptimized: true,
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "www.fencefactory.com" },

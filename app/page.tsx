@@ -25,7 +25,7 @@ const brandValues = [
   { title: "Support from first step", description: "From choosing one product to planning the complete outdoor space." },
 ];
 
-const heroImage = "https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=2400&q=90";
+const heroImage = "https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=2400&q=99";
 const storyImage = "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=2200&q=88";
 const categorySceneImages: Record<string, string> = {
   robotics: "https://images.unsplash.com/photo-1558904541-efa843a96f01?auto=format&fit=crop&w=1200&q=85",
@@ -69,20 +69,21 @@ export default function Home() {
     <main className="overflow-x-clip bg-[var(--paper)] text-[var(--forest)]">
       <section className="relative isolate overflow-hidden bg-[var(--paper)] md:min-h-[68svh]">
         <div className="relative h-[43svh] min-h-76 md:absolute md:inset-0 md:h-auto md:min-h-0">
-          <Image src={heroImage} alt="A sunlit outdoor living space" fill priority sizes="100vw" className="object-cover object-[64%_center]" />
-          <div className="absolute inset-0 hidden bg-[linear-gradient(90deg,rgba(10,38,31,.9)_0%,rgba(10,38,31,.72)_35%,rgba(10,38,31,.2)_62%,transparent_82%)] md:block" />
+          <Image src={heroImage} alt="A sunlit outdoor living space" fill priority quality={99} sizes="100vw" className="object-cover object-[64%_center]" />
+          <div className="absolute inset-0 hidden bg-[linear-gradient(90deg,rgba(10,38,31,.62)_0%,rgba(10,38,31,.42)_35%,rgba(10,38,31,.12)_62%,transparent_82%)] md:block" />
+          <div className="absolute inset-x-0 top-0 z-[1] h-40 bg-[linear-gradient(180deg,rgba(8,29,23,.42),transparent)]" />
         </div>
         <div className="relative z-20 bg-[var(--forest-deep)] px-4 py-2 text-center text-[9px] font-bold uppercase tracking-[0.18em] text-[var(--cream)] md:bg-transparent md:text-white">
           Outdoor living, beautifully considered <span className="mx-2 text-[var(--gold)]">·</span> Built for every season
         </div>
-        <header className="relative z-20 border-b border-[var(--forest)]/10 bg-[var(--paper)]/88 text-[var(--forest)] backdrop-blur-sm md:border-b-0 md:bg-[rgba(245,242,235,.05)] md:text-[var(--forest)] md:backdrop-blur-md">
+        <header className="relative z-20 bg-transparent text-white">
           <div className="mx-auto flex h-18 max-w-[1800px] items-center justify-between px-5 sm:px-8 lg:h-21 lg:px-12 xl:px-16">
-            <Link href="/" className="font-[family-name:var(--font-display)] text-3xl tracking-[0.02em] max-md:text-[var(--forest)] md:!text-white md:drop-shadow-[0_1px_2px_rgba(0,0,0,.35)]" aria-label="LumaYard home">Luma<span className="italic">Yard</span></Link>
-            <nav aria-label="Primary navigation" className="hidden items-center gap-8 font-[family-name:var(--font-display)] text-3xl leading-none text-[var(--forest)] xl:flex">
+            <Link href="/" className="font-[family-name:var(--font-display)] text-4xl leading-none tracking-[0.01em] drop-shadow-[0_1px_3px_rgba(0,0,0,.28)]" aria-label="LumaYard home">Luma<span className="italic">Yard</span></Link>
+            <nav aria-label="Primary navigation" className="hidden items-center gap-9 text-[14px] font-bold uppercase tracking-[0.15em] text-white xl:flex">
               <Link href="#categories" className="homepage-link">Collections</Link><Link href="/shop" className="homepage-link">Shop</Link><Link href="#about" className="homepage-link">Our approach</Link><Link href="/contact" className="homepage-link">Contact</Link>
             </nav>
-            <button type="button" aria-controls="mobile-navigation" aria-expanded={menuOpen} aria-label={menuOpen ? "Close menu" : "Open menu"} onClick={() => setMenuOpen((isOpen) => !isOpen)} className="grid h-10 w-10 place-items-center border border-[var(--forest)]/25 xl:hidden"><Icon name={menuOpen ? "close" : "menu"} /></button>
-            <Link href="/contact" className="hidden border-b border-[var(--forest)]/55 pb-1 font-[family-name:var(--font-display)] text-2xl leading-none text-[var(--forest)] transition hover:border-[var(--gold)] hover:text-[var(--gold)] xl:block">Plan your space</Link>
+            <button type="button" aria-controls="mobile-navigation" aria-expanded={menuOpen} aria-label={menuOpen ? "Close menu" : "Open menu"} onClick={() => setMenuOpen((isOpen) => !isOpen)} className="grid h-10 w-10 place-items-center border border-white/45 text-white xl:hidden"><Icon name={menuOpen ? "close" : "menu"} /></button>
+            <Link href="/contact" className="relative right-16 hidden items-center gap-2 text-[14px] font-bold uppercase tracking-[0.15em] text-white transition hover:text-[var(--gold)] xl:flex"><span aria-hidden="true" className="text-lg leading-none text-[var(--gold)]">✦</span>Plan my yard</Link>
           </div>
         </header>
         <div className="relative z-10 flex md:min-h-[calc(68svh-6.75rem)] md:items-end">
@@ -119,8 +120,8 @@ export default function Home() {
             const savedCover = categoryData?.coverImage;
             const image = savedCover && !savedCover.startsWith("data:image/svg+xml") ? savedCover : categorySceneImages[category.id] || fallbackProduct?.images?.[0] || heroImage;
             return <Link key={category.id} href={`/shop?category=${category.id}`} className="group relative block aspect-[.78] w-[78vw] shrink-0 snap-start overflow-hidden rounded-t-md bg-[var(--forest-deep)] lg:w-auto">
-              <Image src={image} alt={category.title} fill sizes="(min-width: 1024px) 25vw, 78vw" className={`homepage-image object-cover ${index === 1 ? "object-[60%_center]" : "object-center"}`} />
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,29,23,.05)_26%,rgba(8,29,23,.84)_100%)]" />
+              <Image src={image} alt={category.title} fill quality={99} sizes="(min-width: 1024px) 25vw, 78vw" className={`homepage-image object-cover ${index === 1 ? "object-[60%_center]" : "object-center"}`} />
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,29,23,0)_34%,rgba(8,29,23,.18)_100%)]" />
               <div className="absolute inset-x-0 bottom-0 p-5 text-[var(--cream)] sm:p-6"><p className="text-[9px] font-semibold uppercase tracking-[0.16em] text-white/70">0{index + 1}</p><div className="mt-2 flex items-end justify-between gap-3"><div><h3 className="font-[family-name:var(--font-display)] text-3xl leading-none sm:text-4xl">{category.title}</h3><p className="mt-2 max-w-xs text-sm leading-5 text-white/78">{category.description}</p></div><Icon name="arrow" className="mb-1 h-5 w-5 shrink-0 transition-transform group-hover:translate-x-1" /></div></div>
             </Link>;
           })}
