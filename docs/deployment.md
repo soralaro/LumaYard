@@ -136,6 +136,16 @@ sudo certbot --nginx -d 你的域名.com -d www.你的域名.com
 sudo certbot renew --dry-run
 ```
 
+本次 VPS 的 Nginx 运行在无 systemd 的容器中，不能使用 `systemctl reload nginx`；修改证书或配置后使用：
+
+```bash
+sudo nginx -t
+sudo nginx -s reload
+sudo certbot renew --dry-run
+```
+
+证书申请时将根域名和 `www` 一起加入（例如 `-d lumayard.me.uk -d www.lumayard.me.uk`）。若 DNS 使用 Cloudflare 代理，请在 Cloudflare 的 SSL/TLS 中选择 `Full (strict)`，确保 Cloudflare 到 VPS 的 HTTPS 连接也校验证书。容器没有 systemd 时，需由宿主机 cron/定时任务执行 `certbot renew`，续期后执行 `nginx -s reload`。
+
 ## 7. 更新与回滚
 
 更新：
@@ -159,3 +169,182 @@ pm2 restart lumayard
 ```
 
 不要删除服务器上的 `.env` 文件。
+
+## 8. 2026-09 实际 VPS 部署记录
+
+本次美国 VPS 使用已有的容器/主机环境，没有新建 Docker。SSH 必须通过本机代理连接：
+
+```bash
+proxychains4 ssh -p 48322 lumayard@45.78.1.226
+```
+
+远端已有源码目录 `/home/lumayard/LumaYard`，生产目录是 `/var/www/lumayard`。部署时在生产目录切换到目标提交，并保留该目录已有的 `.env`：
+
+```bash
+cd /var/www/lumayard
+git fetch origin
+git checkout f744c17
+```
+
+不要用仓库文件覆盖生产 `.env`，也不要把数据库密码或 R2 密钥写进 Git。`.env` 至少应包含 `DATABASE_URL` 和完整的 `S3_*` 配置，权限设为 `600`。
+
+### 数据库和初始化
+
+本次在远端安装了 PostgreSQL，并创建独立的 `lumayard_app` 用户和 `lumayard` 数据库。端口是否可用必须先检查；如果 5432/5433 已被其他服务占用，就为 PostgreSQL 选择其他本机端口并同步修改 `DATABASE_URL`。
+
+```bash
+sudo pg_lsclusters
+sudo ss -ltn | grep -E ':5432|:5433|:5434' || true
+npx prisma generate
+npx prisma db push
+npm run products:import-admin
+npm run categories:import
+npm run admin:create -- owner@example.com 'strong-password' 'Site Owner'
+```
+
+### 低内存主机的安装和构建
+
+本次主机约 1 GB 内存。普通 `npm ci` 会被 OOM 杀掉，因此先使用低内存安装：
+
+```bash
+export NODE_OPTIONS=--max-old-space-size=256
+npm ci --omit=optional --ignore-scripts --no-audit --no-fund --install-strategy=shallow
+```
+
+`--omit=optional` 会跳过当前平台的 esbuild 二进制，构建或 `tsx` 导入时会报 `@esbuild/linux-x64` 缺失。安装完成后补齐它：
+
+```bash
+npm install --no-save --no-audit --no-fund @esbuild/linux-x64
+```
+
+构建时提高 Node 堆上限（实际值要低于容器可用内存，并确保有 swap）：
+
+```bash
+export NODE_OPTIONS=--max-old-space-size=700
+NEXT_TELEMETRY_DISABLED=1 npx next build --webpack
+```
+
+只有构建成功后才重启线上进程。若构建失败，旧版本仍应保持运行。
+
+### tmux 持久运行
+
+长时间的安装、导入和构建必须放在远端 tmux 中，这样 SSH 断线不会终止任务：
+
+```bash
+tmux new -s lumayard       # 仅首次创建
+tmux attach -t lumayard
+```
+
+按 `Ctrl-b`、`d` 可分离会话；重新登录后再次 `tmux attach -t lumayard` 查看进度。部署结束后可分离，不要杀掉该会话中的 shell。
+
+### PM2 和 Nginx 切换
+
+本次 Nginx 继续监听 80 端口并反代到 `127.0.0.1:3000`，只替换后面的 LumaYard PM2 进程，不删除 Nginx：
+
+```bash
+sudo pm2 list
+sudo pm2 restart lumayard --update-env
+sudo pm2 save
+```
+
+如果 PM2 中没有该应用，确认旧进程归属后再启动：
+
+```bash
+cd /var/www/lumayard
+sudo pm2 start npm --name lumayard -- start -- -p 3000
+sudo pm2 save
+```
+
+### 部署验收
+
+```bash
+curl -fsS -o /dev/null -w 'app:%{http_code}\n' http://127.0.0.1:3000/
+curl -fsS -o /dev/null -w 'api:%{http_code}\n' http://127.0.0.1:3000/api/products
+curl -fsS -o /dev/null -w 'nginx:%{http_code}\n' http://127.0.0.1/
+proxychains4 curl -fsS -o /dev/null -w 'external:%{http_code}\n' http://45.78.1.226/
+```
+
+本次验收结果为应用首页、产品 API、Nginx 和外网地址均返回 `200`，PM2 已保存，源码提交为 `f744c17`。
+
+## 9. 本地修改后更新云端
+
+日常发布从本地 Git 推送开始。不要用 `scp` 覆盖整个生产目录，也不要把本地 `.env` 上传到服务器；云端的 `.env`、PostgreSQL 数据、R2 对象和 HTTPS 证书不由 Git 管理。
+
+### 9.1 本地提交并推送
+
+```bash
+cd /home/czx/LumaYard
+git status
+git add <修改的文件>
+git commit -m "describe the change"
+git push origin main
+git rev-parse --short HEAD
+```
+
+记下最后输出的提交号，下面以 `<新提交号>` 代替。
+
+### 9.2 进入云端持久会话
+
+SSH 必须使用代理；部署命令放在 tmux 中执行，网络中断后任务仍会继续：
+
+```bash
+proxychains4 ssh -tt -p 48322 lumayard@45.78.1.226 'tmux attach -t lumayard'
+```
+
+如果会话尚未创建，先执行 `tmux new -s lumayard`。完成后按 `Ctrl-b`、`d` 分离，不要退出 tmux 中的 shell。
+
+### 9.3 拉取、安装、构建并重启
+
+在云端 tmux 中执行。先保存当前提交号，构建失败时可以回滚：
+
+```bash
+cd /var/www/lumayard
+OLD_COMMIT=$(git rev-parse --short HEAD)
+cp .env ".env.backup.$(date +%Y%m%d%H%M%S)"
+git fetch origin
+git checkout <新提交号>
+
+export NODE_OPTIONS=--max-old-space-size=700
+npm ci --omit=optional --ignore-scripts --no-audit --no-fund --install-strategy=shallow
+npm install --no-save --no-audit --no-fund @esbuild/linux-x64
+npx prisma generate
+npx prisma db push
+NEXT_TELEMETRY_DISABLED=1 npx next build --webpack
+
+sudo pm2 restart lumayard --update-env
+sudo pm2 save
+echo "deployed $(git rev-parse --short HEAD), previous $OLD_COMMIT"
+```
+
+只有产品或分类数据文件发生变化时，才额外执行：
+
+```bash
+npm run products:import-admin
+npm run categories:import
+```
+
+构建成功后才重启 PM2。若 `next build` 失败，不要重启，线上仍会继续运行旧进程。
+
+### 9.4 发布后检查
+
+```bash
+curl -fsS -o /dev/null -w 'app:%{http_code}\n' https://www.lumayard.me.uk/
+curl -fsS -o /dev/null -w 'api:%{http_code}\n' https://www.lumayard.me.uk/api/products
+sudo pm2 status
+sudo pm2 logs lumayard --lines 50
+```
+
+正常情况下首页和 API 返回 `200`，PM2 中 `lumayard` 为 `online`。外网检查失败时，先查看 `sudo pm2 logs lumayard --lines 100`，再检查 `sudo nginx -t`。
+
+### 9.5 回滚到上一个版本
+
+如果新版本验收失败，在云端执行上一步记录的旧提交号：
+
+```bash
+cd /var/www/lumayard
+git checkout <上一个正常提交号>
+export NODE_OPTIONS=--max-old-space-size=700
+NEXT_TELEMETRY_DISABLED=1 npx next build --webpack
+sudo pm2 restart lumayard --update-env
+sudo pm2 save
+```
