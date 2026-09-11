@@ -4,6 +4,10 @@ export type PublicSiteSettings = {
   email: string;
   whatsappNumber: string;
   linkedinUrl: string;
+  facebookUrl: string;
+  xUrl: string;
+  instagramUrl: string;
+  youtubeUrl: string;
   serviceArea: string;
   hours: string;
 };
@@ -12,6 +16,10 @@ export const defaultSiteSettings: PublicSiteSettings = {
   email: "hello@lumayard.com",
   whatsappNumber: "15551234567",
   linkedinUrl: "",
+  facebookUrl: "",
+  xUrl: "",
+  instagramUrl: "",
+  youtubeUrl: "",
   serviceArea: "Serving homeowners and outdoor projects across the United States.",
   hours: "Mon-Fri, 9am-5pm",
 };

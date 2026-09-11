@@ -5,6 +5,7 @@ import { use } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { SocialLinks } from "@/components/social-links";
 
 type Product = {
   id: string;
@@ -229,6 +230,7 @@ export default function ProductPage({ params }: { params: Promise<{ handle: stri
 
       <footer className="bg-[#102c25] px-5 pb-7 pt-16 text-[#f5f2eb] sm:px-8 lg:px-14">
         <div className="mx-auto max-w-[1440px]">
+          <div className="mb-8 flex flex-col gap-4"><p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#c89957]">Stay connected</p><SocialLinks compact /></div>
           <div className="flex flex-col justify-between gap-3 border-t border-white/15 pt-6 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/45 sm:flex-row">
             <span>© 2026 LumaYard. Professional outdoor products.</span>
             <Link href="/" className="hover:text-white/70">Back to home</Link>
