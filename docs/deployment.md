@@ -204,17 +204,25 @@ npm run admin:create -- owner@example.com 'strong-password' 'Site Owner'
 
 ### 低内存主机的安装和构建
 
-本次主机约 1 GB 内存。普通 `npm ci` 会被 OOM 杀掉，因此先使用低内存安装：
+本次主机约 1 GB 内存。普通 `npm ci` 会被 OOM 杀掉，因此先使用低内存安装，并确认主机有足够 swap（本次 VPS 使用约 937 MB swap）：
 
 ```bash
 export NODE_OPTIONS=--max-old-space-size=256
-npm ci --omit=optional --ignore-scripts --no-audit --no-fund --install-strategy=shallow
+npm ci --include=dev --omit=optional --ignore-scripts --no-audit --no-fund --install-strategy=shallow
 ```
 
 `--omit=optional` 会跳过当前平台的 esbuild 二进制，构建或 `tsx` 导入时会报 `@esbuild/linux-x64` 缺失。安装完成后补齐它：
 
 ```bash
 npm install --no-save --no-audit --no-fund @esbuild/linux-x64
+npm install --no-save --package-lock=false --no-audit --no-fund lightningcss-linux-x64-gnu@1.32.0
+```
+
+`lightningcss-linux-x64-gnu` 是 Tailwind/Next CSS 构建所需的平台二进制，同样因为跳过 optional 依赖而需要补装。若之前的安装被中断并出现 `ENOTEMPTY`，先把残缺目录改名备份，再重新安装：
+
+```bash
+mv node_modules "node_modules.backup.$(date +%Y%m%d%H%M%S)"
+npm ci --include=dev --omit=optional --ignore-scripts --no-audit --no-fund --install-strategy=shallow
 ```
 
 构建时提高 Node 堆上限（实际值要低于容器可用内存，并确保有 swap）：
@@ -305,8 +313,9 @@ git fetch origin
 git checkout <新提交号>
 
 export NODE_OPTIONS=--max-old-space-size=700
-npm ci --omit=optional --ignore-scripts --no-audit --no-fund --install-strategy=shallow
+npm ci --include=dev --omit=optional --ignore-scripts --no-audit --no-fund --install-strategy=shallow
 npm install --no-save --no-audit --no-fund @esbuild/linux-x64
+npm install --no-save --package-lock=false --no-audit --no-fund lightningcss-linux-x64-gnu@1.32.0
 ./node_modules/.bin/prisma generate
 ./node_modules/.bin/prisma db push
 NEXT_TELEMETRY_DISABLED=1 npx next build --webpack
