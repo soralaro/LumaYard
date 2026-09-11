@@ -195,8 +195,8 @@ git checkout f744c17
 ```bash
 sudo pg_lsclusters
 sudo ss -ltn | grep -E ':5432|:5433|:5434' || true
-npx prisma generate
-npx prisma db push
+./node_modules/.bin/prisma generate
+./node_modules/.bin/prisma db push
 npm run products:import-admin
 npm run categories:import
 npm run admin:create -- owner@example.com 'strong-password' 'Site Owner'
@@ -232,10 +232,10 @@ NEXT_TELEMETRY_DISABLED=1 npx next build --webpack
 
 ```bash
 tmux new -s lumayard       # 仅首次创建
-tmux attach -t lumayard
+tmux at -t lumayard
 ```
 
-按 `Ctrl-b`、`d` 可分离会话；重新登录后再次 `tmux attach -t lumayard` 查看进度。部署结束后可分离，不要杀掉该会话中的 shell。
+按 `Ctrl-b`、`d` 可分离会话；重新登录后再次 `tmux at -t lumayard` 查看进度。部署结束后可分离，不要杀掉该会话中的 shell。
 
 ### PM2 和 Nginx 切换
 
@@ -288,10 +288,10 @@ git rev-parse --short HEAD
 SSH 必须使用代理；部署命令放在 tmux 中执行，网络中断后任务仍会继续：
 
 ```bash
-proxychains4 ssh -tt -p 48322 lumayard@45.78.1.226 'tmux attach -t lumayard'
+proxychains4 ssh -tt -p 48322 lumayard@45.78.1.226 'tmux at -t lumayard'
 ```
 
-如果会话尚未创建，先执行 `tmux new -s lumayard`。完成后按 `Ctrl-b`、`d` 分离，不要退出 tmux 中的 shell。
+如果会话尚未创建，先执行 `tmux new -s lumayard`；已有会话直接执行 `tmux at -t lumayard`。完成后按 `Ctrl-b`、`d` 分离，不要退出 tmux 中的 shell。
 
 ### 9.3 拉取、安装、构建并重启
 
@@ -307,8 +307,8 @@ git checkout <新提交号>
 export NODE_OPTIONS=--max-old-space-size=700
 npm ci --omit=optional --ignore-scripts --no-audit --no-fund --install-strategy=shallow
 npm install --no-save --no-audit --no-fund @esbuild/linux-x64
-npx prisma generate
-npx prisma db push
+./node_modules/.bin/prisma generate
+./node_modules/.bin/prisma db push
 NEXT_TELEMETRY_DISABLED=1 npx next build --webpack
 
 sudo pm2 restart lumayard --update-env
