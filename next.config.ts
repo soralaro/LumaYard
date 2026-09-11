@@ -13,6 +13,9 @@ const mediaPattern = mediaUrl
   : null;
 
 const nextConfig: NextConfig = {
+  experimental: {
+    useTypeScriptCli: false,
+  },
   images: {
     qualities: [75, 90, 99],
     unoptimized: true,

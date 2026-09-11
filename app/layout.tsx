@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { DM_Sans, Playfair_Display } from "next/font/google";
+import { PageViewTracker } from "@/components/page-view-tracker";
 import "./globals.css";
 
 const sans = DM_Sans({
@@ -31,7 +33,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${sans.variable} ${display.variable}`}>
-      <body>{children}</body>
+      <body>
+        <Suspense fallback={null}><PageViewTracker /></Suspense>
+        {children}
+      </body>
     </html>
   );
 }

@@ -149,7 +149,7 @@ export default function AdminDashboard() {
           <h1 className="text-2xl font-bold text-gray-900">LumaYard 管理后台</h1>
           <div className="flex gap-4">
             {admin.role === "OWNER" && <Link href="/admin/users" className="text-sm text-gray-600 hover:text-gray-900">管理员</Link>}
-            {admin.role === "OWNER" && <Link href="/admin/audit-log" className="text-sm text-gray-600 hover:text-gray-900">访问记录</Link>}
+            {admin.role === "OWNER" && <Link href="/admin/audit-log" className="text-sm text-gray-600 hover:text-gray-900">访客动态</Link>}
             <Link href="/" className="text-sm text-gray-600 hover:text-gray-900">
               查看网站
             </Link>
@@ -206,8 +206,8 @@ export default function AdminDashboard() {
             className="rounded-lg bg-cyan-50 p-6 text-center hover:bg-cyan-100"
           >
             <div className="mb-2 text-3xl font-bold text-cyan-800">#</div>
-            <h3 className="font-semibold text-gray-900">商品兴趣</h3>
-            <p className="text-sm text-gray-600">查看客户浏览的商品</p>
+            <h3 className="font-semibold text-gray-900">访问分析</h3>
+            <p className="text-sm text-gray-600">页面、商品、来源和地区</p>
           </Link>
 
           {admin.role === "OWNER" && <Link href="/admin/settings" className="rounded-lg bg-rose-50 p-6 text-center hover:bg-rose-100"><div className="mb-2 text-3xl font-bold text-rose-700">@</div><h3 className="font-semibold text-gray-900">联系信息</h3><p className="text-sm text-gray-600">编辑邮箱、WhatsApp 和社交链接</p></Link>}

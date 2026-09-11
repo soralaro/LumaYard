@@ -248,8 +248,11 @@ model Inquiry {
 model PageView {
   id String @id @default(cuid())
   visitorId String
+  sessionId String?
   path String
   productId String?
+  pageTitle String?
+  queryString String?
   ipAddress String?
   countryCode String?
   countryName String?
@@ -257,10 +260,20 @@ model PageView {
   city String?
   userAgent String?
   referrer String?
+  utmSource String?
+  utmMedium String?
+  utmCampaign String?
+  language String?
+  timezone String?
+  screenWidth Int?
+  screenHeight Int?
+  durationMs Int?
   createdAt DateTime @default(now())
   product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
   @@index([productId, createdAt])
   @@index([visitorId, createdAt])
+  @@index([sessionId, createdAt])
+  @@index([path, createdAt])
   @@index([ipAddress, createdAt])
   @@index([countryCode, regionName, city])
 }
