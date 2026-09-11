@@ -28,7 +28,7 @@ export function SocialLinks({ compact = false, colored = false }: { compact?: bo
     {platforms.map((platform) => {
       const href = settings[platform.key];
       const className = `grid ${compact ? "h-9 w-9" : "h-10 w-10"} place-items-center border transition ${href ? "hover:-translate-y-0.5" : "cursor-default"}`;
-      const style = colored ? { color: href ? platform.color : "rgba(255,255,255,.35)", borderColor: href ? `${platform.color}99` : "rgba(255,255,255,.2)", backgroundColor: href ? `${platform.color}18` : "transparent" } : undefined;
+      const style = colored ? { color: platform.color, opacity: href ? 1 : 0.55, borderColor: `${platform.color}${href ? "99" : "55"}`, backgroundColor: href ? `${platform.color}18` : "transparent" } : undefined;
       return href ? <a key={platform.key} href={href} target="_blank" rel="noreferrer" className={className} style={style} aria-label={platform.label} title={platform.label}><BrandIcon kind={platform.kind} /></a> : <span key={platform.key} className={className} style={style} aria-label={`${platform.label} link not configured`} title="Add link in admin settings"><BrandIcon kind={platform.kind} /></span>;
     })}
   </div>;
