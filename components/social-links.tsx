@@ -5,11 +5,11 @@ import { useEffect, useState } from "react";
 type SocialSettings = { linkedinUrl: string; facebookUrl: string; xUrl: string; instagramUrl: string; youtubeUrl: string };
 const defaults: SocialSettings = { linkedinUrl: "", facebookUrl: "", xUrl: "", instagramUrl: "", youtubeUrl: "" };
 const platforms = [
-  { key: "linkedinUrl", label: "LinkedIn", kind: "linkedin", color: "#70a9d8" },
-  { key: "facebookUrl", label: "Facebook", kind: "facebook", color: "#7da9e1" },
-  { key: "xUrl", label: "X", kind: "x", color: "#d9ddd9" },
-  { key: "instagramUrl", label: "Instagram", kind: "instagram", color: "#d88a9d" },
-  { key: "youtubeUrl", label: "YouTube", kind: "youtube", color: "#e18484" },
+  { key: "linkedinUrl", label: "LinkedIn", kind: "linkedin", color: "#0a66c2" },
+  { key: "facebookUrl", label: "Facebook", kind: "facebook", color: "#1877f2" },
+  { key: "xUrl", label: "X", kind: "x", color: "#111111" },
+  { key: "instagramUrl", label: "Instagram", kind: "instagram", color: "#c13584" },
+  { key: "youtubeUrl", label: "YouTube", kind: "youtube", color: "#e62117" },
 ] as const;
 
 function BrandIcon({ kind }: { kind: string }) {
@@ -28,7 +28,7 @@ export function SocialLinks({ compact = false, colored = false }: { compact?: bo
     {platforms.map((platform) => {
       const href = settings[platform.key];
       const className = `grid ${compact ? "h-9 w-9" : "h-10 w-10"} place-items-center border transition ${href ? "hover:-translate-y-0.5" : "cursor-default"}`;
-      const style = colored ? { color: platform.color, opacity: href ? 1 : 0.55, borderColor: `${platform.color}${href ? "99" : "55"}`, backgroundColor: href ? `${platform.color}18` : "transparent" } : undefined;
+      const style = colored ? { color: "#ffffff", opacity: href ? 1 : 0.65, borderColor: platform.color, backgroundColor: platform.color } : undefined;
       return href ? <a key={platform.key} href={href} target="_blank" rel="noreferrer" className={className} style={style} aria-label={platform.label} title={platform.label}><BrandIcon kind={platform.kind} /></a> : <span key={platform.key} className={className} style={style} aria-label={`${platform.label} link not configured`} title="Add link in admin settings"><BrandIcon kind={platform.kind} /></span>;
     })}
   </div>;
