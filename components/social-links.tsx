@@ -5,11 +5,11 @@ import { useEffect, useState } from "react";
 type SocialSettings = { linkedinUrl: string; facebookUrl: string; xUrl: string; instagramUrl: string; youtubeUrl: string };
 const defaults: SocialSettings = { linkedinUrl: "", facebookUrl: "", xUrl: "", instagramUrl: "", youtubeUrl: "" };
 const platforms = [
-  { key: "linkedinUrl", label: "LinkedIn", kind: "linkedin" },
-  { key: "facebookUrl", label: "Facebook", kind: "facebook" },
-  { key: "xUrl", label: "X", kind: "x" },
-  { key: "instagramUrl", label: "Instagram", kind: "instagram" },
-  { key: "youtubeUrl", label: "YouTube", kind: "youtube" },
+  { key: "linkedinUrl", label: "LinkedIn", kind: "linkedin", color: "#70a9d8" },
+  { key: "facebookUrl", label: "Facebook", kind: "facebook", color: "#7da9e1" },
+  { key: "xUrl", label: "X", kind: "x", color: "#d9ddd9" },
+  { key: "instagramUrl", label: "Instagram", kind: "instagram", color: "#d88a9d" },
+  { key: "youtubeUrl", label: "YouTube", kind: "youtube", color: "#e18484" },
 ] as const;
 
 function BrandIcon({ kind }: { kind: string }) {
@@ -21,14 +21,15 @@ function BrandIcon({ kind }: { kind: string }) {
   return <svg {...props}><path d="M5 4 19 20M19 4 5 20" /></svg>;
 }
 
-export function SocialLinks({ compact = false }: { compact?: boolean }) {
+export function SocialLinks({ compact = false, colored = false }: { compact?: boolean; colored?: boolean }) {
   const [settings, setSettings] = useState<SocialSettings>(defaults);
   useEffect(() => { void fetch("/api/site-settings").then(async (response) => { if (response.ok) setSettings({ ...defaults, ...(await response.json()) }); }).catch(() => undefined); }, []);
   return <div className={`flex items-center ${compact ? "gap-2" : "gap-3"}`} aria-label="Social links">
     {platforms.map((platform) => {
       const href = settings[platform.key];
-      const className = `grid ${compact ? "h-9 w-9" : "h-10 w-10"} place-items-center border border-white/20 text-white/70 transition ${href ? "hover:border-[var(--gold)] hover:text-[var(--gold)]" : "cursor-default text-white/30"}`;
-      return href ? <a key={platform.key} href={href} target="_blank" rel="noreferrer" className={className} aria-label={platform.label} title={platform.label}><BrandIcon kind={platform.kind} /></a> : <span key={platform.key} className={className} aria-label={`${platform.label} link not configured`} title="Add link in admin settings"><BrandIcon kind={platform.kind} /></span>;
+      const className = `grid ${compact ? "h-9 w-9" : "h-10 w-10"} place-items-center border transition ${href ? "hover:-translate-y-0.5" : "cursor-default"}`;
+      const style = colored ? { color: href ? platform.color : "rgba(255,255,255,.35)", borderColor: href ? `${platform.color}99` : "rgba(255,255,255,.2)", backgroundColor: href ? `${platform.color}18` : "transparent" } : undefined;
+      return href ? <a key={platform.key} href={href} target="_blank" rel="noreferrer" className={className} style={style} aria-label={platform.label} title={platform.label}><BrandIcon kind={platform.kind} /></a> : <span key={platform.key} className={className} style={style} aria-label={`${platform.label} link not configured`} title="Add link in admin settings"><BrandIcon kind={platform.kind} /></span>;
     })}
   </div>;
 }

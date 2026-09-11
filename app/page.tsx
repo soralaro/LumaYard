@@ -84,7 +84,7 @@ export default function Home() {
               <Link href="#categories" className="homepage-link">Collections</Link><Link href="/shop" className="homepage-link">Shop</Link><Link href="#about" className="homepage-link">Our approach</Link><Link href="/contact" className="homepage-link">Contact</Link>
             </nav>
             <button type="button" aria-controls="mobile-navigation" aria-expanded={menuOpen} aria-label={menuOpen ? "Close menu" : "Open menu"} onClick={() => setMenuOpen((isOpen) => !isOpen)} className="grid h-10 w-10 place-items-center border border-white/45 text-white xl:hidden"><Icon name={menuOpen ? "close" : "menu"} /></button>
-            <Link href="/contact" className="relative right-16 hidden items-center gap-2 text-[14px] font-bold uppercase tracking-[0.15em] text-white transition hover:text-[var(--gold)] xl:flex"><span aria-hidden="true" className="text-lg leading-none text-[var(--gold)]">✦</span>Plan my yard</Link>
+            <div className="hidden xl:block"><SocialLinks compact colored /></div><Link href="/contact" className="relative right-16 hidden items-center gap-2 text-[14px] font-bold uppercase tracking-[0.15em] text-white transition hover:text-[var(--gold)] xl:flex"><span aria-hidden="true" className="text-lg leading-none text-[var(--gold)]">✦</span>Plan my yard</Link>
           </div>
         </header>
         <div className="relative z-10 flex md:min-h-[calc(68svh-6.75rem)] md:items-end">
