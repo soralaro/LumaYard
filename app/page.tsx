@@ -76,6 +76,9 @@ export default function Home() {
         </div>
         <div className="relative z-20 bg-[var(--forest-deep)] px-4 py-2 text-center text-[9px] font-bold uppercase tracking-[0.18em] text-[var(--cream)] md:bg-transparent md:text-white">
           Outdoor living, beautifully considered <span className="mx-2 text-[var(--gold)]">·</span> Built for every season
+          <div className="absolute right-5 top-1/2 hidden -translate-y-1/2 items-center xl:flex">
+            <SocialLinks compact colored />
+          </div>
         </div>
         <header className="relative z-20 bg-transparent text-white">
           <div className="mx-auto flex h-18 max-w-[1800px] items-center justify-between px-5 sm:px-8 lg:h-21 lg:px-12 xl:px-16">
@@ -84,7 +87,7 @@ export default function Home() {
               <Link href="#categories" className="homepage-link">Collections</Link><Link href="/shop" className="homepage-link">Shop</Link><Link href="#about" className="homepage-link">Our approach</Link><Link href="/contact" className="homepage-link">Contact</Link>
             </nav>
             <button type="button" aria-controls="mobile-navigation" aria-expanded={menuOpen} aria-label={menuOpen ? "Close menu" : "Open menu"} onClick={() => setMenuOpen((isOpen) => !isOpen)} className="grid h-10 w-10 place-items-center border border-white/45 text-white xl:hidden"><Icon name={menuOpen ? "close" : "menu"} /></button>
-            <div className="hidden flex-col items-end gap-2 xl:flex"><SocialLinks compact colored /><Link href="/contact" className="flex items-center gap-2 text-[14px] font-bold uppercase tracking-[0.15em] text-white transition hover:text-[var(--gold)]"><span aria-hidden="true" className="text-lg leading-none text-[var(--gold)]">✦</span>Plan my yard</Link></div>
+            <div className="hidden flex-col items-end gap-2 xl:flex"><Link href="/contact" className="flex items-center gap-2 text-[14px] font-bold uppercase tracking-[0.15em] text-white transition hover:text-[var(--gold)]"><span aria-hidden="true" className="text-lg leading-none text-[var(--gold)]">✦</span>Plan my yard</Link></div>
           </div>
         </header>
         <div className="relative z-10 flex md:min-h-[calc(68svh-6.75rem)] md:items-end">
