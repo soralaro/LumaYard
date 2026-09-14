@@ -41,6 +41,24 @@ enum InquiryStatus {
   CLOSED
   SPAM
 }
+enum ContentType {
+  GUIDE
+  INSPIRATION
+  JOURNAL
+  CASE_STUDY
+  LOOKBOOK
+  DOWNLOAD
+}
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+enum ContentAssetKind {
+  IMAGE
+  DOCUMENT
+  VIDEO
+}
 
 model User {
   id String @id @default(cuid())
@@ -111,8 +129,65 @@ model Product {
   targetRelations ProductRelation[] @relation("TargetProduct")
   inquiries Inquiry[]
   pageViews PageView[]
+  contentLinks ContentProduct[]
   @@index([status, publishedAt])
   @@index([updatedAt])
+}
+
+model ContentItem {
+  id String @id @default(cuid())
+  slug String @unique
+  title String
+  type ContentType
+  category String?
+  excerpt String? @db.Text
+  body String? @db.Text
+  status ContentStatus @default(DRAFT)
+  featured Boolean @default(false)
+  sortOrder Int @default(0)
+  author String?
+  coverAssetId String?
+  seoTitle String?
+  seoDescription String? @db.Text
+  publishedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  assets ContentAsset[]
+  products ContentProduct[]
+  coverAsset ContentAsset? @relation("ContentCover", fields: [coverAssetId], references: [id], onDelete: SetNull)
+  @@index([status, featured, publishedAt])
+  @@index([type, category])
+}
+
+model ContentAsset {
+  id String @id @default(cuid())
+  kind ContentAssetKind
+  storageKey String @unique
+  publicUrl String
+  originalName String
+  mimeType String
+  byteSize Int
+  width Int?
+  height Int?
+  pageNumber Int?
+  altText String?
+  caption String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  contentId String
+  content ContentItem @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  coverFor ContentItem[] @relation("ContentCover")
+  @@index([contentId, kind, pageNumber])
+}
+
+model ContentProduct {
+  contentId String
+  productId String
+  sortOrder Int @default(0)
+  content ContentItem @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  @@id([contentId, productId])
+  @@index([productId, sortOrder])
 }
 
 model ProductSpecification {
