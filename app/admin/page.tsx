@@ -174,6 +174,12 @@ export default function AdminDashboard() {
             <p className="text-sm text-gray-600">添加新产品到系统</p>
           </Link>
 
+          <Link href="/admin/content" className="rounded-lg bg-amber-50 p-6 text-center hover:bg-amber-100">
+            <div className="mb-2 text-3xl font-bold text-amber-700">↗</div>
+            <h3 className="font-semibold text-gray-900">内容资源库</h3>
+            <p className="text-sm text-gray-600">管理指南、灵感和 PDF</p>
+          </Link>
+
           <Link
             href="/admin/categories"
             className="rounded-lg bg-green-50 p-6 text-center hover:bg-green-100"
