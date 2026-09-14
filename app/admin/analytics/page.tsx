@@ -9,6 +9,7 @@ type ProductInterest = Ranked & { product: { id: string; legacyId: string | null
 type PageInterest = Ranked & { path: string; title: string | null; durationMs: number; lastViewedAt: string };
 type RegionInterest = Ranked & { countryCode: string | null; countryName: string | null; regionName: string | null; city: string | null };
 type SourceInterest = Ranked & { source: string };
+type ContentInterest = { content: { id: string; title?: string; slug?: string }; eventType: string; count: number };
 
 function averageDuration(durationMs: number, views: number) {
   if (!durationMs || !views) return "-";
@@ -26,6 +27,7 @@ export default function AnalyticsPage() {
   const [pages, setPages] = useState<PageInterest[]>([]);
   const [regions, setRegions] = useState<RegionInterest[]>([]);
   const [sources, setSources] = useState<SourceInterest[]>([]);
+  const [content, setContent] = useState<ContentInterest[]>([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -34,6 +36,7 @@ export default function AnalyticsPage() {
       const data = await response.json() as { summary: Summary; products: ProductInterest[]; pages: PageInterest[]; regions: RegionInterest[]; sources: SourceInterest[] };
       setSummary(data.summary); setProducts(data.products); setPages(data.pages); setRegions(data.regions); setSources(data.sources);
     }).catch(() => setError("Unable to load audience analysis."));
+    void fetch("/api/admin/content/analytics").then(async (response) => { if (response.ok) setContent((await response.json()).analytics || []); });
   }, []);
 
   return (
@@ -49,6 +52,7 @@ export default function AnalyticsPage() {
         <RankedTable title="Where visitors come from" rows={sources.map((item) => ({ label: item.source, views: item.views, visitors: item.visitors }))} />
       </div>
       <RankedTable title="Visitor locations" rows={regions.map((item) => ({ label: [item.city, item.regionName, item.countryName].filter(Boolean).join(", ") || "Unknown", views: item.views, visitors: item.visitors }))} />
+      <section className="mt-8 overflow-hidden border bg-white"><div className="border-b px-5 py-4"><h2 className="font-semibold">Content engagement</h2></div><div className="overflow-x-auto"><table className="min-w-full divide-y divide-gray-200 text-sm"><thead className="bg-gray-50 text-left text-xs text-gray-500"><tr><th className="px-5 py-3">Content</th><th className="px-5 py-3">Event</th><th className="px-5 py-3">Count</th></tr></thead><tbody className="divide-y divide-gray-100">{content.map((item, index) => <tr key={`${item.content.id}-${item.eventType}-${index}`}><td className="px-5 py-4">{item.content.title || item.content.id}</td><td className="px-5 py-4">{item.eventType}</td><td className="px-5 py-4 font-semibold">{item.count}</td></tr>)}</tbody></table></div>{!content.length && <p className="p-6 text-sm text-gray-500">No content events recorded yet.</p>}</section>
     </div></main>
   );
 }
