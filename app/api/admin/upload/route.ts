@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getCurrentAdmin, writeAdminAuditLog } from "@/lib/admin-auth";
 import { uploadObject, uploadPolicy } from "@/lib/storage";
 
-const UPLOAD_TYPES = new Set(["products", "categories", "category-cover"]);
+const UPLOAD_TYPES = new Set(["products", "categories", "category-cover", "content"]);
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
 
     const fileType = (formData.get("type") as string) || "products";
     const policy = uploadPolicy(file.type, file.size);
-    const imageOnly = fileType !== "products";
+    const imageOnly = fileType !== "products" && fileType !== "content";
     if (!UPLOAD_TYPES.has(fileType) || !policy.permitted || (imageOnly && !file.type.startsWith("image/"))) {
       return NextResponse.json(
         { success: false, error: "Unsupported upload or object storage is not configured" },
