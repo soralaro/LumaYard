@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { prisma } from "@/lib/prisma";
 
 export type PublicContentType = "GUIDE" | "INSPIRATION" | "JOURNAL" | "CASE_STUDY" | "LOOKBOOK" | "DOWNLOAD";
@@ -19,4 +20,8 @@ export async function findPublishedContent(slug: string) {
 
 export function contentTypeLabel(type: string) {
   return type.toLowerCase().replace("_", " ");
+}
+
+export async function recordContentEvent(input: { contentId: string; assetId?: string; eventType: string; visitorId?: string; path?: string; referrer?: string; userAgent?: string }) {
+  return (prisma as any).contentEvent.create({ data: input });
 }
