@@ -45,6 +45,9 @@ export async function POST(request: NextRequest) {
       success: true,
       url: upload.publicUrl,
       fileName: upload.key,
+      originalName: file.name,
+      mimeType: file.type,
+      byteSize: file.size,
     });
   } catch (error) {
     console.error("Upload error:", error);
