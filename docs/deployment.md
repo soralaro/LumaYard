@@ -334,6 +334,18 @@ npm run categories:import
 
 构建成功后才重启 PM2。若 `next build` 失败，不要重启，线上仍会继续运行旧进程。
 
+#### Prisma 缓存和数据库同步说明
+
+如果 Prisma 默认缓存目录不可写或挂载为只读，使用可写缓存目录执行生成和同步：
+
+```bash
+export XDG_CACHE_HOME=/tmp/lumayard-cache
+./node_modules/.bin/prisma generate
+./node_modules/.bin/prisma db push
+```
+
+不要用 Prisma 7 直接替换项目当前的 Prisma 6.19.3；当前 schema 使用的是 Prisma 6 格式。数据库同步成功后再执行 Next.js 构建。
+
 ### 9.4 发布后检查
 
 ```bash
