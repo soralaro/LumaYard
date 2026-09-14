@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { SocialLinks } from "@/components/social-links";
+import { FeaturedContentSection } from "@/components/featured-content-section";
 
 type IconName = "arrow" | "menu" | "close";
 type Product = { id: string; title: string; titleEn: string; price: number; category: string; images: string[]; status: string };
@@ -68,6 +69,7 @@ export default function Home() {
 
   return (
     <main className="overflow-x-clip bg-[var(--paper)] text-[var(--forest)]">
+      <FeaturedContentSection />
       <section className="relative isolate overflow-hidden bg-[var(--paper)] md:min-h-[68svh]">
         <div className="relative h-[43svh] min-h-76 md:absolute md:inset-0 md:h-auto md:min-h-0">
           <Image src={heroImage} alt="A sunlit outdoor living space" fill priority quality={99} sizes="100vw" className="object-cover object-[64%_center]" />

@@ -1,0 +1,5 @@
+"use client";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+type Item = { id: string; slug: string; title: string; excerpt: string | null; type: string; image: string | null };
+export function FeaturedContentSection() { const [items, setItems] = useState<Item[]>([]); useEffect(() => { void fetch("/api/content").then(async (r) => { if (r.ok) setItems((await r.json()).items || []); }); }, []); if (!items.length) return null; return <section className="bg-[var(--paper)] px-6 py-16"><div className="mx-auto max-w-[2100px]"><p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--moss)]">From the journal</p><h2 className="mt-3 font-[family-name:var(--font-display)] text-5xl">Ideas for outside.</h2><div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{items.slice(0, 3).map((item) => <Link key={item.id} href={`/ideas/${item.slug}`} className="group border-t border-[var(--forest)]/20 pt-4"><h3 className="font-[family-name:var(--font-display)] text-2xl group-hover:underline">{item.title}</h3>{item.excerpt && <p className="mt-2 text-sm">{item.excerpt}</p>}</Link>)}</div></div></section>; }
