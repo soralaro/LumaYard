@@ -1,0 +1,6 @@
+import { notFound, redirect } from "next/navigation";
+import Link from "next/link";
+import { getCurrentAdmin } from "@/lib/admin-auth";
+import { prisma } from "@/lib/prisma";
+export const dynamic = "force-dynamic";
+export default async function EditContentPage({ params }: { params: Promise<{ id: string }> }) { const admin = await getCurrentAdmin(); if (!admin) redirect("/admin"); const item = await prisma.contentItem.findUnique({ where: { id: (await params).id }, select: { title: true, slug: true, type: true, status: true, featured: true, category: true, excerpt: true, body: true } }); if (!item) notFound(); return <main className="min-h-screen bg-gray-50"><header className="border-b bg-white"><div className="mx-auto flex max-w-4xl items-center justify-between px-6 py-5"><h1 className="text-xl font-bold text-gray-900">Edit content</h1><Link href="/admin/content" className="text-sm text-gray-600">Back to library</Link></div></header><section className="mx-auto max-w-4xl px-6 py-8"><p className="rounded-lg bg-white p-7 text-sm text-gray-700">Content editing API is ready for the interactive editor. Current item: <strong>{item.title}</strong> ({item.status.toLowerCase()}).</p></section></main>; }
