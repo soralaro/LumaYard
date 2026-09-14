@@ -313,6 +313,7 @@ git fetch origin
 git checkout <新提交号>
 
 export NODE_OPTIONS=--max-old-space-size=700
+export XDG_CACHE_HOME=/tmp/lumayard-cache
 npm ci --include=dev --omit=optional --ignore-scripts --no-audit --no-fund --install-strategy=shallow
 npm install --no-save --no-audit --no-fund @esbuild/linux-x64
 npm install --no-save --package-lock=false --no-audit --no-fund lightningcss-linux-x64-gnu@1.32.0
