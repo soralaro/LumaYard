@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 
 const allowedTypes = new Set(["image/jpeg", "image/png", "image/webp", "image/avif", "application/pdf"]);
 export const MAX_IMAGE_BYTES = 15 * 1024 * 1024;
-export const MAX_DOCUMENT_BYTES = 25 * 1024 * 1024;
+export const MAX_DOCUMENT_BYTES = 50 * 1024 * 1024;
 
 export function storageConfigured() {
   return Boolean(
