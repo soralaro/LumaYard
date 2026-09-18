@@ -100,7 +100,7 @@ export default function AdminDashboard() {
     const sortOrder = Number.parseInt(value, 10);
     if (!Number.isFinite(sortOrder)) return;
     const response = await fetch(`/api/admin/products/${product.id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ sortOrder }) });
-    if (response.ok) setProducts((current) => current.map((item) => item.id === product.id ? { ...item, sortOrder } : item).sort((a, b) => a.sortOrder - b.sortOrder));
+    if (response.ok) setProducts((current) => current.map((item) => item.id === product.id ? { ...item, sortOrder } : item).sort((a, b) => b.sortOrder - a.sortOrder));
   };
 
   if (!authChecked) {
@@ -279,7 +279,7 @@ export default function AdminDashboard() {
                         </div>
                       </div>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4"><input aria-label={`${product.title} 首页顺序`} type="number" min="0" step="1" defaultValue={product.sortOrder ?? 0} onBlur={(event) => void handleSortOrder(product, event.target.value)} className="w-20 rounded border border-gray-300 px-2 py-1 text-sm" /><span className="ml-2 text-xs text-gray-400">越小越靠前</span></td>
+                    <td className="whitespace-nowrap px-6 py-4"><input aria-label={`${product.title} 首页顺序`} type="number" step="1" defaultValue={product.sortOrder ?? 0} onBlur={(event) => void handleSortOrder(product, event.target.value)} className="w-20 rounded border border-gray-300 px-2 py-1 text-sm" /><span className="ml-2 text-xs text-gray-400">越大越靠前</span></td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                       {product.category}
                     </td>

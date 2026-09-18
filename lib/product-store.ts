@@ -69,11 +69,11 @@ function toProductUpdate(input: ProductInput): Prisma.ProductUncheckedUpdateInpu
 }
 
 export async function listAdminProducts() {
-  return (await prisma.product.findMany({ orderBy: [{ sortOrder: "asc" }, { updatedAt: "desc" }] })).map(toStoreProduct);
+  return (await prisma.product.findMany({ orderBy: [{ sortOrder: "desc" }, { updatedAt: "desc" }] })).map(toStoreProduct);
 }
 
 export async function listPublishedProducts() {
-  return (await prisma.product.findMany({ where: { status: "PUBLISHED" }, orderBy: [{ sortOrder: "asc" }, { publishedAt: "desc" }] })).map(toStoreProduct);
+  return (await prisma.product.findMany({ where: { status: "PUBLISHED" }, orderBy: [{ sortOrder: "desc" }, { publishedAt: "desc" }] })).map(toStoreProduct);
 }
 
 export async function findProduct(identifier: string, publishedOnly = false) {
