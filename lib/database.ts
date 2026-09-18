@@ -12,6 +12,7 @@ export type ProductRecord = {
   price: number;
   category: string;
   status: ProductStatus;
+  sortOrder?: number;
   description: string;
   descriptionEn: string;
   features: string[];

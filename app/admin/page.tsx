@@ -12,6 +12,7 @@ type Product = {
   status: "draft" | "published" | "archived";
   images: string[];
   createdAt: string;
+  sortOrder: number;
 };
 
 type AdminUser = { id: string; email: string; name: string | null; role: "OWNER" | "EDITOR" };
@@ -93,6 +94,13 @@ export default function AdminDashboard() {
     } catch {
       alert("删除失败");
     }
+  };
+
+  const handleSortOrder = async (product: Product, value: string) => {
+    const sortOrder = Number.parseInt(value, 10);
+    if (!Number.isFinite(sortOrder)) return;
+    const response = await fetch(`/api/admin/products/${product.id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ sortOrder }) });
+    if (response.ok) setProducts((current) => current.map((item) => item.id === product.id ? { ...item, sortOrder } : item).sort((a, b) => a.sortOrder - b.sortOrder));
   };
 
   if (!authChecked) {
@@ -246,6 +254,7 @@ export default function AdminDashboard() {
                   <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                     状态
                   </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">首页顺序</th>
                   <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
                     操作
                   </th>
@@ -270,6 +279,7 @@ export default function AdminDashboard() {
                         </div>
                       </div>
                     </td>
+                    <td className="whitespace-nowrap px-6 py-4"><input aria-label={`${product.title} 首页顺序`} type="number" min="0" step="1" defaultValue={product.sortOrder ?? 0} onBlur={(event) => void handleSortOrder(product, event.target.value)} className="w-20 rounded border border-gray-300 px-2 py-1 text-sm" /><span className="ml-2 text-xs text-gray-400">越小越靠前</span></td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                       {product.category}
                     </td>

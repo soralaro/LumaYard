@@ -20,6 +20,7 @@ export function toStoreProduct(product: Product): ProductRecord {
     price: product.price.toNumber(),
     category: product.legacyCategory || "other",
     status: product.status.toLowerCase() as ProductRecord["status"],
+    sortOrder: product.sortOrder,
     description: product.summary ? "" : product.description,
     descriptionEn: product.description,
     features: stringArray(product.legacyFeatures),
@@ -45,6 +46,7 @@ function toProductData(input: ProductInput, legacyId: string): Prisma.ProductUnc
     legacyPdfUrl: input.pdfUrl,
     price: input.price,
     status: input.status.toUpperCase() as "DRAFT" | "PUBLISHED" | "ARCHIVED",
+    sortOrder: input.sortOrder ?? 0,
     publishedAt: input.status === "published" ? new Date() : null,
   };
 }
@@ -61,16 +63,17 @@ function toProductUpdate(input: ProductInput): Prisma.ProductUncheckedUpdateInpu
     legacyPdfUrl: input.pdfUrl,
     price: input.price,
     status: input.status.toUpperCase() as "DRAFT" | "PUBLISHED" | "ARCHIVED",
+    sortOrder: input.sortOrder ?? 0,
     publishedAt: input.status === "published" ? new Date() : null,
   };
 }
 
 export async function listAdminProducts() {
-  return (await prisma.product.findMany({ orderBy: { updatedAt: "desc" } })).map(toStoreProduct);
+  return (await prisma.product.findMany({ orderBy: [{ sortOrder: "asc" }, { updatedAt: "desc" }] })).map(toStoreProduct);
 }
 
 export async function listPublishedProducts() {
-  return (await prisma.product.findMany({ where: { status: "PUBLISHED" }, orderBy: { publishedAt: "desc" } })).map(toStoreProduct);
+  return (await prisma.product.findMany({ where: { status: "PUBLISHED" }, orderBy: [{ sortOrder: "asc" }, { publishedAt: "desc" }] })).map(toStoreProduct);
 }
 
 export async function findProduct(identifier: string, publishedOnly = false) {
