@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { getCurrentAdmin, isOwner } from "@/lib/admin-auth";
+import { getCurrentAdmin } from "@/lib/admin-auth";
 import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   const admin = await getCurrentAdmin();
-  if (!admin || !isOwner(admin)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  if (!admin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const [views, events, sessions] = await Promise.all([
     prisma.pageView.findMany({

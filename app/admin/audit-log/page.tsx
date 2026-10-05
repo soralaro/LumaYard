@@ -43,7 +43,7 @@ export default function AuditLogPage() {
 
   useEffect(() => {
     void fetch("/api/admin/audit-log").then(async (response) => {
-      if (!response.ok) { setError("Only the account owner can view visitor history."); return; }
+      if (!response.ok) { setError("You do not have permission to view visitor history."); return; }
       const data = await response.json() as { summary: Summary; visitors: Visitor[]; recentViews: PageVisit[]; events: Event[] };
       setSummary(data.summary); setVisitors(data.visitors); setRecentViews(data.recentViews); setEvents(data.events);
     }).catch(() => setError("Unable to load visitor history."));

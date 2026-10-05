@@ -157,7 +157,7 @@ export default function AdminDashboard() {
           <h1 className="text-2xl font-bold text-gray-900">LumaYard 管理后台</h1>
           <div className="flex gap-4">
             {admin.role === "OWNER" && <Link href="/admin/users" className="text-sm text-gray-600 hover:text-gray-900">管理员</Link>}
-            {admin.role === "OWNER" && <Link href="/admin/audit-log" className="text-sm text-gray-600 hover:text-gray-900">访客动态</Link>}
+            <Link href="/admin/audit-log" className="text-sm text-gray-600 hover:text-gray-900">访客动态</Link>
             <Link href="/" className="text-sm text-gray-600 hover:text-gray-900">
               查看网站
             </Link>
