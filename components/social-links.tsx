@@ -2,14 +2,15 @@
 
 import { useEffect, useState } from "react";
 
-type SocialSettings = { linkedinUrl: string; facebookUrl: string; xUrl: string; instagramUrl: string; youtubeUrl: string };
-const defaults: SocialSettings = { linkedinUrl: "", facebookUrl: "", xUrl: "", instagramUrl: "", youtubeUrl: "" };
+type SocialSettings = { linkedinUrl: string; facebookUrl: string; xUrl: string; instagramUrl: string; youtubeUrl: string; tiktokUrl: string };
+const defaults: SocialSettings = { linkedinUrl: "", facebookUrl: "", xUrl: "", instagramUrl: "", youtubeUrl: "", tiktokUrl: "https://www.tiktok.com/@soralaro" };
 const platforms = [
   { key: "linkedinUrl", label: "LinkedIn", kind: "linkedin", color: "#0a66c2" },
   { key: "facebookUrl", label: "Facebook", kind: "facebook", color: "#1877f2" },
   { key: "xUrl", label: "X", kind: "x", color: "#111111" },
   { key: "instagramUrl", label: "Instagram", kind: "instagram", color: "#c13584" },
   { key: "youtubeUrl", label: "YouTube", kind: "youtube", color: "#e62117" },
+  { key: "tiktokUrl", label: "TikTok", kind: "tiktok", color: "#111111" },
 ] as const;
 
 function BrandIcon({ kind }: { kind: string }) {
@@ -18,6 +19,7 @@ function BrandIcon({ kind }: { kind: string }) {
   if (kind === "facebook") return <svg {...props}><path d="M14 21v-8h2.8l.4-3H14V8.1c0-.9.3-1.5 1.6-1.5h1.7V4a18 18 0 0 0-2.5-.2c-2.5 0-4.2 1.5-4.2 4.3V10H8v3h2.6v8" /></svg>;
   if (kind === "instagram") return <svg {...props}><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="4.5" /><circle cx="12" cy="12" r="4.1" /><circle cx="17.5" cy="6.7" r=".7" fill="currentColor" stroke="none" /></svg>;
   if (kind === "youtube") return <svg {...props}><path d="m10 8 6 4-6 4V8Z" fill="currentColor" stroke="none" /><path d="M21 12c0 3.8-.4 5.5-1.1 6.2-.7.7-2.4 1.1-7.9 1.1s-7.2-.4-7.9-1.1C3.4 17.5 3 15.8 3 12s.4-5.5 1.1-6.2C4.8 5.1 6.5 4.7 12 4.7s7.2.4 7.9 1.1C20.6 6.5 21 8.2 21 12Z" /></svg>;
+  if (kind === "tiktok") return <svg {...props}><path d="M14.5 4v10.2a3.8 3.8 0 1 1-3-3.7" /><path d="M14.5 4c.4 2.3 1.8 3.8 4 4.2" /></svg>;
   return <svg {...props}><path d="M5 4 19 20M19 4 5 20" /></svg>;
 }
 

@@ -8,6 +8,7 @@ export type PublicSiteSettings = {
   xUrl: string;
   instagramUrl: string;
   youtubeUrl: string;
+  tiktokUrl: string;
   serviceArea: string;
   hours: string;
 };
@@ -20,6 +21,7 @@ export const defaultSiteSettings: PublicSiteSettings = {
   xUrl: "",
   instagramUrl: "",
   youtubeUrl: "",
+  tiktokUrl: "https://www.tiktok.com/@soralaro",
   serviceArea: "Serving homeowners and outdoor projects across the United States.",
   hours: "Mon-Fri, 9am-5pm",
 };
